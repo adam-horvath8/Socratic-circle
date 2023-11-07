@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
+import { useState } from "react";
 
 // import componenets
 import {
@@ -23,13 +24,65 @@ const formSchema = z.object({
   mainQuestion: z.string().min(2).max(200),
   mainIssue: z.string().min(2).max(500),
   thesis: z.string().min(2).max(500),
-  body: z.string().min(2).max(10000),
   conclusion: z.string().min(2).max(1000),
 });
 
+type bodyStateType = [{ chapterTitle: string; chapterParagraphs: string[] }];
+
 export interface ICreateEssayProps {}
 
+const defaultBody = [{ chapterTitle: "", chapterParagraphs: [""] }];
+
 export default function CreateEssay(props: ICreateEssayProps) {
+  const [body, setBody] = useState<bodyStateType>(defaultBody);
+
+  console.log(body);
+  // TODO figure out why add paragraph button adds tho par at the same time
+  // TODO learn and fix typescript
+
+  const handleAddParagraph = (
+    e: React.FormEvent<HTMLFormElement>,
+    chapterIndex: number
+  ) => {
+    e.preventDefault();
+    setBody((prevBody) => {
+      const updatedBody = [...prevBody];
+      updatedBody[chapterIndex].chapterParagraphs.push("");
+      return updatedBody;
+    });
+  };
+
+  const handleParagraphChange = (
+    chapterIndex: number,
+    paragraphIndex: number,
+    text: string
+  ) => {
+    setBody((prevBody) => {
+      const updatedBody = [...prevBody];
+      updatedBody[chapterIndex].chapterParagraphs[paragraphIndex] = text;
+      return updatedBody;
+    });
+  };
+
+  const handleAddChapter = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setBody((prevBody) => [
+      ...prevBody,
+      { chapterTitle: "", chapterParagraphs: [""] },
+    ]);
+  };
+
+  const handleChapterChange = (chapterIndex: number, text: string) => {
+    setBody((prevBody) => {
+      const updatedBody = [...prevBody];
+      updatedBody[chapterIndex].chapterTitle = text;
+      return updatedBody;
+    });
+  };
+
+  // Form validations
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,7 +90,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
       mainQuestion: "",
       mainIssue: "",
       thesis: "",
-      body: "",
       conclusion: "",
     },
   });
@@ -45,6 +97,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
+    // Database query
     const essaysCollectionRef = collection(db, "essays");
 
     const createEssay = async () => {
@@ -54,7 +107,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
           mainQuestion: values.mainQuestion,
           mainIssue: values.mainIssue,
           thesis: values.thesis,
-          body: values.body,
+          body: body,
           conclusion: values.conclusion,
           author: {
             name: auth.currentUser?.displayName,
@@ -62,6 +115,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
           },
         });
         form.reset();
+        setBody(defaultBody);
       } catch (err) {
         console.error(err);
       }
@@ -147,40 +201,52 @@ export default function CreateEssay(props: ICreateEssayProps) {
           </fieldset>
           <fieldset className="border-2 p-10">
             <legend>Body</legend>
-            <FormField
-              control={form.control}
-              name="body"
-              render={({ field }) => (
+            {body.map((chapter, chapterIndex) => (
+              <div key={chapterIndex}>
                 <FormItem>
                   <FormLabel>Chapter title</FormLabel>
                   <FormDescription>
                     This is your public display name.
                   </FormDescription>
                   <FormControl>
-                    <Input />
+                    <Input
+                      value={chapter.chapterTitle}
+                      onChange={(e) => {
+                        const text = e.target.value;
+                        handleChapterChange(chapterIndex, text);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="body"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Paragraph</FormLabel>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
-                  <FormControl>
-                    <Textarea rows={10} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button>Add Paragraph</Button>
-            <Button>Add Chapter</Button>
+                {chapter.chapterParagraphs.map((par, parIndex) => (
+                  <FormItem key={parIndex}>
+                    <FormLabel>Paragraph</FormLabel>
+                    <FormDescription>
+                      This is your public display name.
+                    </FormDescription>
+                    <FormControl>
+                      <Textarea
+                        rows={10}
+                        value={par}
+                        onChange={(e) => {
+                          const text = e.target.value;
+                          handleParagraphChange(chapterIndex, parIndex, text);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                ))}
+
+                <Button onClick={(e) => handleAddParagraph(e, chapterIndex)}>
+                  Add Paragraph
+                </Button>
+                <Button onClick={(e) => handleAddChapter(e)}>
+                  Add Chapter
+                </Button>
+              </div>
+            ))}
           </fieldset>
 
           <FormField
