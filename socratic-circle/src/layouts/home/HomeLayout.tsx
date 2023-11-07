@@ -27,8 +27,8 @@ export default function HomeLayout(props: IHomeLayoutProps) {
   };
 
   return (
-    <div className="flex ">
-      <nav className="bg-orange-600 text-white min-h-screen flex flex-col p-5 gap-2">
+    <div className="flex">
+      <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto p-5 gap-2">
         <NavLink to="" className={buttonVariants({ variant: "outline" })}>
           Feed
         </NavLink>
@@ -44,9 +44,15 @@ export default function HomeLayout(props: IHomeLayoutProps) {
         >
           My Essays
         </NavLink>
+        <NavLink
+          to="create-essay"
+          className={buttonVariants({ variant: "outline" })}
+        >
+          Create Essay
+        </NavLink>
         <Button onClick={handleLogOut}>Log out</Button>
       </nav>
-      <main>
+      <main className="flex-[10_3_0%]">
         <Outlet></Outlet>
       </main>
     </div>

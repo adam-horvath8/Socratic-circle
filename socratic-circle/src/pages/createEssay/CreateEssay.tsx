@@ -1,12 +1,207 @@
-import * as React from 'react';
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { addDoc, collection } from "firebase/firestore";
+import { auth, db } from "@/config/firebase";
 
-export interface ICreateEssayProps {
-}
+// import componenets
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
-export default function CreateEssay (props: ICreateEssayProps) {
+const formSchema = z.object({
+  title: z.string().min(2).max(50),
+  mainQuestion: z.string().min(2).max(200),
+  mainIssue: z.string().min(2).max(500),
+  thesis: z.string().min(2).max(500),
+  body: z.string().min(2).max(10000),
+  conclusion: z.string().min(2).max(1000),
+});
+
+export interface ICreateEssayProps {}
+
+export default function CreateEssay(props: ICreateEssayProps) {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      mainQuestion: "",
+      mainIssue: "",
+      thesis: "",
+      body: "",
+      conclusion: "",
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+
+    const essaysCollectionRef = collection(db, "essays");
+
+    const createEssay = async () => {
+      try {
+        await addDoc(essaysCollectionRef, {
+          title: values.title,
+          mainQuestion: values.mainQuestion,
+          mainIssue: values.mainIssue,
+          thesis: values.thesis,
+          body: values.body,
+          conclusion: values.conclusion,
+          author: {
+            name: auth.currentUser?.displayName,
+            id: auth.currentUser?.uid,
+          },
+        });
+        form.reset();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    createEssay();
+  }
+
   return (
-    <div>
-      
+    <div className="py-10 px-20 flex flex-col items-center">
+      <h1>Add your new essay!</h1>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 w-full"
+        >
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <fieldset className="border-2 p-10">
+            <legend>About</legend>
+            <FormField
+              control={form.control}
+              name="mainQuestion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Main Question</FormLabel>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mainIssue"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Main Issue</FormLabel>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="thesis"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Thesis</FormLabel>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
+          <fieldset className="border-2 p-10">
+            <legend>Body</legend>
+            <FormField
+              control={form.control}
+              name="body"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Chapter title</FormLabel>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormControl>
+                    <Input />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="body"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Paragraph</FormLabel>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormControl>
+                    <Textarea rows={10} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button>Add Paragraph</Button>
+            <Button>Add Chapter</Button>
+          </fieldset>
+
+          <FormField
+            control={form.control}
+            name="conclusion"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Conclusion</FormLabel>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormControl>
+                  <Textarea rows={6} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export interface ILogInProps {}
 export default function LogIn(props: ILogInProps) {
   const navigate = useNavigate();
 
-  const authState = useSelector((state: AuthStateType) => state.authState.value);
+  const authState = useSelector((state: AuthStateType) => state.authState);
 
   const dispatch = useDispatch();
 
@@ -24,6 +24,7 @@ export default function LogIn(props: ILogInProps) {
       await signInWithPopup(auth, provider);
       localStorage.setItem("isAuth", true.toString());
       dispatch(login(true));
+
       navigate("/home");
     } catch (error) {
       console.error("Error signing in with Google:", error);

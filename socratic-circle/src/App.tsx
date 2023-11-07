@@ -3,7 +3,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
-  Link,
   RouterProvider,
 } from "react-router-dom";
 
@@ -15,6 +14,7 @@ import Feed from "./pages/feed/Feed";
 import Profil from "./pages/profil/Profil";
 import MyEssays from "./pages/myEssays/MyEssays";
 import ErrorPage from "./pages/error/ErrorPage";
+import CreateEssay from "./pages/createEssay/CreateEssay";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -24,6 +24,7 @@ const App = () => {
         <Route path="sign-in" element={<SignIn />} />
         <Route path="home" element={<HomeLayout />}>
           <Route index element={<Feed />} />
+          <Route path="create-essay" element={<CreateEssay />} />
           <Route path="profile" element={<Profil />} />
           <Route path="my-essays" element={<MyEssays />} />
         </Route>
