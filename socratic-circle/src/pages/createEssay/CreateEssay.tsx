@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 // import componenets
 import {
@@ -27,39 +28,62 @@ const formSchema = z.object({
   conclusion: z.string().min(2).max(1000),
 });
 
-type bodyStateType = [{ chapterTitle: string; chapterParagraphs: string[] }];
+// type bodyStateType = [
+//   {
+//     chapterId: string;
+//     chapterTitle: string;
+//     chapterParagraphs: object[{ id: string; text: string }];
+//   }
+// ];
 
 export interface ICreateEssayProps {}
 
-const defaultBody = [{ chapterTitle: "", chapterParagraphs: [""] }];
+const defaultBody: bodyStateType = [
+  {
+    chapterId: uuidv4(),
+    chapterTitle: "",
+    chapterParagraphs: [{ id: uuidv4(), text: "" }],
+  },
+];
 
 export default function CreateEssay(props: ICreateEssayProps) {
-  const [body, setBody] = useState<bodyStateType>(defaultBody);
+  const [body, setBody] = useState(defaultBody);
 
-  console.log(body);
-  // TODO figure out why add paragraph button adds tho par at the same time
-  // TODO learn and fix typescript
+  // Console
+  // body.map((chapter) => {
+  //   chapter.chapterParagraphs.map((par) => {
+  //     console.log(par.id);
+  //   });
+  // });
 
+  // console.log(body);
+
+  // Functions
   const handleAddParagraph = (
     e: React.FormEvent<HTMLFormElement>,
-    chapterIndex: number
+    chapterId: string
   ) => {
     e.preventDefault();
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
-      updatedBody[chapterIndex].chapterParagraphs.push("");
+      updatedBody
+        .find((chapter) => chapter.chapterId == chapterId)
+        .chapterParagraphs.push({ id: uuidv4(), text: "" });
       return updatedBody;
     });
   };
 
   const handleParagraphChange = (
-    chapterIndex: number,
-    paragraphIndex: number,
+    chapterId: string,
+    paragraphId: string,
     text: string
   ) => {
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
-      updatedBody[chapterIndex].chapterParagraphs[paragraphIndex] = text;
+      updatedBody
+        .find((chapter) => chapter.chapterId == chapterId)
+        .chapterParagraphs.find((par) => par.id == paragraphId).text = text;
+      console.log(updatedBody);
       return updatedBody;
     });
   };
@@ -70,14 +94,16 @@ export default function CreateEssay(props: ICreateEssayProps) {
     e.preventDefault();
     setBody((prevBody) => [
       ...prevBody,
-      { chapterTitle: "", chapterParagraphs: [""] },
+      { chapterTitle: "", chapterParagraphs: [{ id: uuidv4(), text: "" }] },
     ]);
   };
 
-  const handleChapterChange = (chapterIndex: number, text: string) => {
+  const handleChapterChange = (chapterId: string, text: string) => {
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
-      updatedBody[chapterIndex].chapterTitle = text;
+      updatedBody.find(
+        (chapter) => chapter.chapterId === chapterId
+      ).chapterTitle = text;
       return updatedBody;
     });
   };
@@ -201,8 +227,8 @@ export default function CreateEssay(props: ICreateEssayProps) {
           </fieldset>
           <fieldset className="border-2 p-10">
             <legend>Body</legend>
-            {body.map((chapter, chapterIndex) => (
-              <div key={chapterIndex}>
+            {body.map((chapter) => (
+              <div key={chapter.chapterId}>
                 <FormItem>
                   <FormLabel>Chapter title</FormLabel>
                   <FormDescription>
@@ -213,14 +239,14 @@ export default function CreateEssay(props: ICreateEssayProps) {
                       value={chapter.chapterTitle}
                       onChange={(e) => {
                         const text = e.target.value;
-                        handleChapterChange(chapterIndex, text);
+                        handleChapterChange(chapter.chapterId, text);
                       }}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-                {chapter.chapterParagraphs.map((par, parIndex) => (
-                  <FormItem key={parIndex}>
+                {chapter.chapterParagraphs.map((par) => (
+                  <FormItem key={par.id}>
                     <FormLabel>Paragraph</FormLabel>
                     <FormDescription>
                       This is your public display name.
@@ -228,10 +254,14 @@ export default function CreateEssay(props: ICreateEssayProps) {
                     <FormControl>
                       <Textarea
                         rows={10}
-                        value={par}
+                        value={par.text}
                         onChange={(e) => {
                           const text = e.target.value;
-                          handleParagraphChange(chapterIndex, parIndex, text);
+                          handleParagraphChange(
+                            chapter.chapterId,
+                            par.id,
+                            text
+                          );
                         }}
                       />
                     </FormControl>
@@ -239,7 +269,9 @@ export default function CreateEssay(props: ICreateEssayProps) {
                   </FormItem>
                 ))}
 
-                <Button onClick={(e) => handleAddParagraph(e, chapterIndex)}>
+                <Button
+                  onClick={(e) => handleAddParagraph(e, chapter.chapterId)}
+                >
                   Add Paragraph
                 </Button>
                 <Button onClick={(e) => handleAddChapter(e)}>
