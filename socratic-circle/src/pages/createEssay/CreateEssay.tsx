@@ -21,20 +21,26 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  mainQuestion: z.string().min(2).max(200),
+  title: z.string().min(2).max(100),
+  mainQuestion: z.string().min(2).max(500),
   mainIssue: z.string().min(2).max(500),
   thesis: z.string().min(2).max(500),
-  conclusion: z.string().min(2).max(1000),
+  introduction: z.string().min(2).max(3000),
+  conclusion: z.string().min(2).max(3000),
 });
 
-// type bodyStateType = [
-//   {
-//     chapterId: string;
-//     chapterTitle: string;
-//     chapterParagraphs: object[{ id: string; text: string }];
-//   }
-// ];
+type ParagraphType = {
+  id: string;
+  text: string;
+};
+
+type chapterType = {
+  chapterId: string;
+  chapterTitle: string;
+  chapterParagraphs: ParagraphType[];
+};
+
+type bodyStateType = chapterType[];
 
 export interface ICreateEssayProps {}
 
@@ -47,28 +53,29 @@ const defaultBody: bodyStateType = [
 ];
 
 export default function CreateEssay(props: ICreateEssayProps) {
-  const [body, setBody] = useState(defaultBody);
-
-  // Console
-  // body.map((chapter) => {
-  //   chapter.chapterParagraphs.map((par) => {
-  //     console.log(par.id);
-  //   });
-  // });
-
-  // console.log(body);
+  const [body, setBody] = useState<bodyStateType>(defaultBody);
 
   // Functions
   const handleAddParagraph = (
-    e: React.FormEvent<HTMLFormElement>,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     chapterId: string
   ) => {
     e.preventDefault();
+
     setBody((prevBody) => {
-      const updatedBody = [...prevBody];
-      updatedBody
-        .find((chapter) => chapter.chapterId == chapterId)
-        .chapterParagraphs.push({ id: uuidv4(), text: "" });
+      const updatedBody = prevBody.map((chapter) => {
+        if (chapter.chapterId === chapterId) {
+          return {
+            ...chapter,
+            chapterParagraphs: [
+              ...chapter.chapterParagraphs,
+              { id: uuidv4(), text: "" },
+            ],
+          };
+        }
+        return chapter;
+      });
+
       return updatedBody;
     });
   };
@@ -80,10 +87,13 @@ export default function CreateEssay(props: ICreateEssayProps) {
   ) => {
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
-      updatedBody
-        .find((chapter) => chapter.chapterId == chapterId)
-        .chapterParagraphs.find((par) => par.id == paragraphId).text = text;
-      console.log(updatedBody);
+      const paragraphToUpdate = updatedBody
+        .find((chapter) => chapter.chapterId === chapterId)
+        .chapterParagraphs.find((par) => par.id === paragraphId);
+      if (paragraphToUpdate) {
+        paragraphToUpdate.text = text;
+      }
+
       return updatedBody;
     });
   };
@@ -94,16 +104,23 @@ export default function CreateEssay(props: ICreateEssayProps) {
     e.preventDefault();
     setBody((prevBody) => [
       ...prevBody,
-      { chapterTitle: "", chapterParagraphs: [{ id: uuidv4(), text: "" }] },
+      {
+        chapterId: uuidv4(),
+        chapterTitle: "",
+        chapterParagraphs: [{ id: uuidv4(), text: "" }],
+      },
     ]);
   };
 
   const handleChapterChange = (chapterId: string, text: string) => {
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
-      updatedBody.find(
+      const chapterToUpdate = updatedBody.find(
         (chapter) => chapter.chapterId === chapterId
-      ).chapterTitle = text;
+      );
+      if (chapterToUpdate) {
+        chapterToUpdate.chapterTitle = text;
+      }
       return updatedBody;
     });
   };
@@ -116,6 +133,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
       mainQuestion: "",
       mainIssue: "",
       thesis: "",
+      introduction: "",
       conclusion: "",
     },
   });
@@ -133,6 +151,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
           mainQuestion: values.mainQuestion,
           mainIssue: values.mainIssue,
           thesis: values.thesis,
+          introduction: values.introduction,
           body: body,
           conclusion: values.conclusion,
           author: {
@@ -141,18 +160,22 @@ export default function CreateEssay(props: ICreateEssayProps) {
           },
         });
         form.reset();
+        console.log(body);
+
         setBody(defaultBody);
       } catch (err) {
         console.error(err);
       }
     };
 
+    console.log(body);
+
     createEssay();
   }
 
   return (
     <div className="py-10 px-20 flex flex-col items-center">
-      <h1>Add your new essay!</h1>
+      <h1>Add your New Essay!</h1>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -164,9 +187,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Title</FormLabel>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
+                <FormDescription>Add Name of your Essay</FormDescription>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -183,7 +204,8 @@ export default function CreateEssay(props: ICreateEssayProps) {
                 <FormItem>
                   <FormLabel>Main Question</FormLabel>
                   <FormDescription>
-                    This is your public display name.
+                    Add Main Question that you want to find answer to in your
+                    Essay
                   </FormDescription>
                   <FormControl>
                     <Input {...field} />
@@ -199,7 +221,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
                 <FormItem>
                   <FormLabel>Main Issue</FormLabel>
                   <FormDescription>
-                    This is your public display name.
+                    Write Problem that your are deailng with in your Essay
                   </FormDescription>
                   <FormControl>
                     <Input {...field} />
@@ -215,7 +237,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
                 <FormItem>
                   <FormLabel>Thesis</FormLabel>
                   <FormDescription>
-                    This is your public display name.
+                    Write main idea that you want to present and defend
                   </FormDescription>
                   <FormControl>
                     <Input {...field} />
@@ -225,15 +247,29 @@ export default function CreateEssay(props: ICreateEssayProps) {
               )}
             />
           </fieldset>
+          <FormField
+            control={form.control}
+            name="introduction"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Introduction</FormLabel>
+                <FormDescription>
+                  Write what you want to achieve in this Essay and sketch out
+                  your plan to do so.
+                </FormDescription>
+                <FormControl>
+                  <Textarea rows={6} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <fieldset className="border-2 p-10">
             <legend>Body</legend>
             {body.map((chapter) => (
               <div key={chapter.chapterId}>
                 <FormItem>
-                  <FormLabel>Chapter title</FormLabel>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
+                  <FormLabel>Chapter Title</FormLabel>
                   <FormControl>
                     <Input
                       value={chapter.chapterTitle}
@@ -248,9 +284,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
                 {chapter.chapterParagraphs.map((par) => (
                   <FormItem key={par.id}>
                     <FormLabel>Paragraph</FormLabel>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
                     <FormControl>
                       <Textarea
                         rows={10}
@@ -288,7 +321,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
               <FormItem>
                 <FormLabel>Conclusion</FormLabel>
                 <FormDescription>
-                  This is your public display name.
+                  Conclude what you achieved in this Essay
                 </FormDescription>
                 <FormControl>
                   <Textarea rows={6} {...field} />
