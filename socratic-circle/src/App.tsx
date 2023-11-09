@@ -15,6 +15,7 @@ import Profil from "./pages/profil/Profil";
 import MyEssays from "./pages/myEssays/MyEssays";
 import ErrorPage from "./pages/error/ErrorPage";
 import CreateEssay from "./pages/createEssay/CreateEssay";
+import EssayFull from "./pages/essayFull/EssayFull";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -26,7 +27,10 @@ const App = () => {
           <Route index element={<Feed />} />
           <Route path="create-essay" element={<CreateEssay />} />
           <Route path="profile" element={<Profil />} />
-          <Route path="my-essays" element={<MyEssays />} />
+          <Route path="my-essays" element={<MyEssays />}>
+            <Route path=":id" element={<EssayFull />} /> {/* Handle :id for my-essays */}
+          </Route>
+          <Route path=":id" element={<EssayFull />} /> {/* Handle :id at the top level */}
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Route>
@@ -34,5 +38,6 @@ const App = () => {
   );
   return <RouterProvider router={router} />;
 };
+
 
 export default App;

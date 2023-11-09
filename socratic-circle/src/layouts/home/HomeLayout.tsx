@@ -19,6 +19,8 @@ export default function HomeLayout(props: IHomeLayoutProps) {
 
   const authState = useSelector((state: AuthStateType) => state.authState);
 
+  // Log out
+
   useEffect(() => {
     if (!authState) {
       navigate("/");

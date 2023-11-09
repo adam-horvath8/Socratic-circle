@@ -5,6 +5,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { bodyStateType } from "../../types/types";
 
 // import componenets
 import {
@@ -19,28 +20,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
   mainQuestion: z.string().min(2).max(500),
-  mainIssue: z.string().min(2).max(500),
-  thesis: z.string().min(2).max(500),
+  mainIssue: z.string().min(2).max(1000),
+  thesis: z.string().min(2).max(1000),
   introduction: z.string().min(2).max(3000),
   conclusion: z.string().min(2).max(3000),
+  cathegory: z.string().min(2).max(100),
 });
-
-type ParagraphType = {
-  id: string;
-  text: string;
-};
-
-type chapterType = {
-  chapterId: string;
-  chapterTitle: string;
-  chapterParagraphs: ParagraphType[];
-};
-
-type bodyStateType = chapterType[];
 
 export interface ICreateEssayProps {}
 
@@ -135,13 +133,16 @@ export default function CreateEssay(props: ICreateEssayProps) {
       thesis: "",
       introduction: "",
       conclusion: "",
+      cathegory: "",
     },
   });
 
+  // Database query
+
+  const { toast } = useToast();
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-
-    // Database query
     const essaysCollectionRef = collection(db, "essays");
 
     const createEssay = async () => {
@@ -154,14 +155,18 @@ export default function CreateEssay(props: ICreateEssayProps) {
           introduction: values.introduction,
           body: body,
           conclusion: values.conclusion,
+          cathegory: values.cathegory,
           author: {
             name: auth.currentUser?.displayName,
             id: auth.currentUser?.uid,
           },
         });
+        toast({
+          title: "Your Essay has been submitted succesfully",
+          description: "You can see it on the page My Essays",
+        });
         form.reset();
         console.log(body);
-
         setBody(defaultBody);
       } catch (err) {
         console.error(err);
@@ -313,7 +318,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
               </div>
             ))}
           </fieldset>
-
           <FormField
             control={form.control}
             name="conclusion"
@@ -330,7 +334,41 @@ export default function CreateEssay(props: ICreateEssayProps) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="cathegory"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cathegory</FormLabel>
+                <FormDescription>Add a cathegory of your Essay</FormDescription>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    {...field}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Aesthetics">Aesthetics</SelectItem>
+                      <SelectItem value="Epistemology">Epistemology</SelectItem>
+                      <SelectItem value="Ethics">Ethics</SelectItem>
+                      <SelectItem value="Logic">Logic</SelectItem>
+                      <SelectItem value="Metaphysics">Metaphysics</SelectItem>
+                      <SelectItem value="Political Philosophy">
+                        Political Philosophy
+                      </SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type="submit">Submit</Button>
+          <Toaster />
         </form>
       </Form>
     </div>
