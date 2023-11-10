@@ -156,6 +156,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
           body: body,
           conclusion: values.conclusion,
           cathegory: values.cathegory,
+          comments: [],
           author: {
             name: auth.currentUser?.displayName,
             id: auth.currentUser?.uid,

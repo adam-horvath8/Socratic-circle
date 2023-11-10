@@ -4,6 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addData } from "@/features/essaysData";
+import { essaysDataType } from "@/types/types";
 
 // components import
 
@@ -19,7 +20,12 @@ export default function Feed(props: IFeedProps) {
       try {
         const data = await getDocs(essaysCollectionRef);
         dispatch(
-          addData(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+          addData(
+            data.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as essaysDataType
+          )
         );
       } catch (err) {
         console.error(err);
@@ -28,12 +34,15 @@ export default function Feed(props: IFeedProps) {
     getEssays();
   }, []);
 
-  const essaysData = useSelector((state) => state.essaysData);
+  const essaysData: essaysDataType = useSelector(
+    (state: any) => state.essaysData
+  );
+  console.log(essaysData);
 
   return (
     <div className="p-10 flex flex-col gap-5">
       {essaysData.map((essay) => (
-        <EssayCard link="" key={essay.id} essay={essay} />
+        <EssayCard key={essay.id} essay={essay} />
       ))}
     </div>
   );

@@ -1,5 +1,4 @@
-import React from "react";
-
+import { Comments } from "./Comments";
 // import componenets
 import {
   Card,
@@ -16,10 +15,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { oneEssayType } from "@/types/types";
 
-export function EssayCard({ essay, link }) {
+interface IEssayCard {
+  essay: oneEssayType;
+}
+
+export function EssayCard({ essay }: IEssayCard) {
   return (
     <Card key={essay.id}>
       <CardHeader>
@@ -42,7 +46,7 @@ export function EssayCard({ essay, link }) {
           </AccordionItem>
         </Accordion>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col">
         <div className="w-full flex justify-between">
           <Link to={essay.id} className={buttonVariants()}>
             See Essay
@@ -50,6 +54,7 @@ export function EssayCard({ essay, link }) {
 
           <Badge variant="outline">@{essay.author.name}</Badge>
         </div>
+        <Comments id={essay.id} />
       </CardFooter>
     </Card>
   );

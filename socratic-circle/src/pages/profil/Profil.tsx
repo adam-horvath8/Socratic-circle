@@ -4,13 +4,18 @@ import { auth } from "@/config/firebase";
 export interface IProfilProps {}
 
 export default function Profil(props: IProfilProps) {
+  const photoURL = auth.currentUser?.photoURL;
+  
   return (
     <div>
       <Avatar>
-        <AvatarImage src={auth.currentUser?.photoURL} />
-        <AvatarFallback>CN</AvatarFallback>
+        {photoURL ? (
+          <AvatarImage src={photoURL} />
+        ) : (
+          <AvatarFallback>CN</AvatarFallback>
+        )}
       </Avatar>
-        <span>{auth.currentUser?.displayName}</span>
+      <span>{auth.currentUser?.displayName}</span>
     </div>
   );
 }

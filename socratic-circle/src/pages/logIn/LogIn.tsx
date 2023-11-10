@@ -19,7 +19,6 @@ export default function LogIn(props: ILogInProps) {
       await signInWithPopup(auth, provider);
       localStorage.setItem("isAuth", true.toString());
       dispatch(login(true));
-      console.log(auth.currentUser);
       navigate("/home");
     } catch (error) {
       console.error("Error signing in with Google:", error);

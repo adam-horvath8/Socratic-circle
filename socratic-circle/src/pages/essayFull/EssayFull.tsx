@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { essaysDataType, oneEssayType } from "@/types/types";
 
 // import components
 import {
@@ -17,17 +18,27 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+
 
 export interface IAppProps {}
 
 export default function App(props: IAppProps) {
-  const essaysData = useSelector((state) => state.essaysData);
+  const essaysData: essaysDataType = useSelector(
+    (state: any): essaysDataType => state.essaysData
+  );
 
   const { id } = useParams();
 
-  const selectedEssay = essaysData.filter((data) => data.id === id)[0];
+  const selectedEssay: oneEssayType = essaysData.filter(
+    (data) => data.id === id
+  )[0];
 
-  console.log(selectedEssay);
+  const navigate = useNavigate();
+
+  const handleCloseEssay = () => {
+    navigate(-1);
+  };
 
   return (
     <div>
@@ -62,11 +73,15 @@ export default function App(props: IAppProps) {
               ))}
             </div>
           ))}
+          <h2>Conslusion</h2>
+          <p>{selectedEssay.conclusion}</p>
         </CardContent>
         <CardFooter>
           <div className="w-full flex justify-between">
+            <Button onClick={handleCloseEssay}>Close</Button>
             <Badge variant="outline">@{selectedEssay.author.name}</Badge>
           </div>
+         
         </CardFooter>
       </Card>
     </div>
