@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import { auth, db } from "@/config/firebase";
-import { commentType, oneEssayType } from "@/types/types";
+import { commentType } from "@/types/types";
 import {
+  DocumentData,
+  DocumentReference,
   collection,
   doc,
   getDoc,
-  getDocs,
   updateDoc,
 } from "firebase/firestore";
 
@@ -22,17 +23,9 @@ import { Input } from "./ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Card, CardHeader } from "./ui/card";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 const formSchema = z.object({
   comment: z.string().min(2).max(500),
@@ -53,30 +46,37 @@ export function Comments({ id }: IComments) {
     },
   });
 
-  // Submit comment
   const essaysCollectionRef = collection(db, "essays");
 
+  const getExistingComments = async (
+    essayDocRef: DocumentReference<DocumentData, DocumentData>
+  ) => {
+    const essayDocSnapshot = await getDoc(essayDocRef);
+    return essayDocSnapshot.data()?.comments || [];
+  };
+
+  const addNewComment = (
+    existingComments: commentType[],
+    values: z.infer<typeof formSchema>
+  ) => {
+    return [
+      ...existingComments,
+      {
+        comment: values.comment,
+        commentId: uuidv4(),
+        authorName: auth.currentUser?.displayName,
+      },
+    ];
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-
     try {
-      // Step 1: Retrieve the existing document
       const essayDocRef = doc(essaysCollectionRef, id);
-      const essayDocSnapshot = await getDoc(essayDocRef);
+      const existingComments = await getExistingComments(essayDocRef);
+      const updatedComments = addNewComment(existingComments, values);
 
-      // Step 2: Modify the array by adding the new object
-      const existingComments = essayDocSnapshot.data()?.comments || []; // Assuming 'comments' is the array field in your document
-      const updatedComments: commentType[] = [
-        ...existingComments,
-        {
-          comment: values.comment,
-          commentId: uuidv4(),
-          authorName: auth.currentUser?.displayName,
-        },
-      ];
-
-      // Step 3: Update the document in the collection with the modified array
       await updateDoc(essayDocRef, { comments: updatedComments });
+      setComments(updatedComments);
 
       form.reset();
     } catch (err) {
@@ -84,15 +84,19 @@ export function Comments({ id }: IComments) {
     }
   };
 
-  // Get Comments
-  const essaysData = useSelector((state: any) => state.essaysData);
+  const fetchComments = async () => {
+    try {
+      const essayDocRef = doc(essaysCollectionRef, id);
+      const existingComments = await getExistingComments(essayDocRef);
+      setComments(existingComments);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    const filteredEssaysData = essaysData.filter(
-      (data: oneEssayType) => data.id === id
-    );
-    const selectedComments = filteredEssaysData[0].comments;
-    setComments(selectedComments);
-  }, []);
+    fetchComments();
+  }, [id]);
 
   return (
     <Dialog>
@@ -119,7 +123,6 @@ export function Comments({ id }: IComments) {
                 name="comment"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
