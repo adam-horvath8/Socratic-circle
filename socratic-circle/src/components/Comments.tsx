@@ -26,6 +26,8 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Card, CardHeader } from "./ui/card";
 import { useEffect, useState } from "react";
+import { Badge } from "./ui/badge";
+import { Textarea } from "./ui/textarea";
 
 const formSchema = z.object({
   comment: z.string().min(2).max(500),
@@ -106,12 +108,16 @@ export function Comments({ id }: IComments) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Comments</DialogTitle>
-          <Card>
-            <CardHeader>
-              {comments.map((item) => (
-                <p key={item.commentId}>{item.comment}</p>
-              ))}
-            </CardHeader>
+          <Card className="flex flex-col gap-2 p-2">
+            {comments.map((item) => (
+              <div
+                key={item.commentId}
+                className="border-b-2 rounded-sm flex flex-col"
+              >
+                <Badge variant="secondary">{item.authorName}</Badge>
+                <p className="break-all">{item.comment}</p>
+              </div>
+            ))}
           </Card>
           <Form {...form}>
             <form
@@ -124,7 +130,7 @@ export function Comments({ id }: IComments) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} />
+                      <Textarea {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

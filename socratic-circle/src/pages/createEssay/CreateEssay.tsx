@@ -5,7 +5,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { bodyStateType } from "../../types/types";
+import { bodyStateType, chapterType } from "../../types/types";
 
 // import componenets
 import {
@@ -52,6 +52,7 @@ const defaultBody: bodyStateType = [
 
 export default function CreateEssay(props: ICreateEssayProps) {
   const [body, setBody] = useState<bodyStateType>(defaultBody);
+  console.log(body);
 
   // Functions
   const handleAddParagraph = (
@@ -110,6 +111,33 @@ export default function CreateEssay(props: ICreateEssayProps) {
     ]);
   };
 
+  const handleDeleteChapter = (id: string) => {
+    const filteredBodyChapters = body.filter(
+      (chapter) => chapter.chapterId !== id
+    );
+    if (body.length > 1) {
+      setBody(filteredBodyChapters);
+    }
+  };
+
+  const handleDeletePar = (chapterId: string, parId: string) => {
+    setBody((prev): chapterType[] => {
+      const updatedBody = prev.map((chapter) => {
+        if (chapter.chapterId === chapterId) {
+          const filteredParagraphs = chapter.chapterParagraphs.filter(
+            (par) => par.id !== parId
+          );
+          return {
+            ...chapter,
+            chapterParagraphs: filteredParagraphs,
+          };
+        }
+        return chapter;
+      });
+      return updatedBody;
+    });
+  };
+
   const handleChapterChange = (chapterId: string, text: string) => {
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
@@ -166,7 +194,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
           title: "Your Essay has been submitted succesfully",
           description: "You can see it on the page My Essays",
         });
-        form.reset();
+        await form.reset();
         console.log(body);
         setBody(defaultBody);
       } catch (err) {
@@ -275,7 +303,17 @@ export default function CreateEssay(props: ICreateEssayProps) {
             {body.map((chapter) => (
               <div key={chapter.chapterId}>
                 <FormItem>
-                  <FormLabel>Chapter Title</FormLabel>
+                  <div>
+                    <FormLabel>Chapter Title</FormLabel>
+                    {body.length > 1 && (
+                      <Button
+                        type="button"
+                        onClick={() => handleDeleteChapter(chapter.chapterId)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </div>
                   <FormControl>
                     <Input
                       value={chapter.chapterTitle}
@@ -289,7 +327,17 @@ export default function CreateEssay(props: ICreateEssayProps) {
                 </FormItem>
                 {chapter.chapterParagraphs.map((par) => (
                   <FormItem key={par.id}>
-                    <FormLabel>Paragraph</FormLabel>
+                    <div>
+                      <FormLabel>Paragraph</FormLabel>
+                      <Button
+                        onClick={() =>
+                          handleDeletePar(chapter.chapterId, par.id)
+                        }
+                      >
+                        Delete
+                      </Button>
+                    </div>
+
                     <FormControl>
                       <Textarea
                         rows={10}

@@ -37,34 +37,50 @@ export default function HomeLayout(props: IHomeLayoutProps) {
     }
   };
 
+  console.log(authState);
+  const isAuth = Boolean(localStorage.getItem("isAuth"));
+  console.log(isAuth);
+  
+
   return (
     <div className="flex">
       <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto p-5 gap-2">
-        <NavLink to="" className={buttonVariants({ variant: "outline" })}>
-          Feed
-        </NavLink>
-        <NavLink
-          to="profile"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Profile
-        </NavLink>
-        <NavLink
-          to="my-essays"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          My Essays
-        </NavLink>
-        <NavLink
-          to="create-essay"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Create Essay
-        </NavLink>
-        <Button onClick={handleLogOut}>Log out</Button>
+        {isAuth ? (
+          <>
+            <NavLink to="" className={buttonVariants({ variant: "outline" })}>
+              Feed
+            </NavLink>
+            <NavLink
+              to="profile"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Profile
+            </NavLink>
+            <NavLink
+              to="my-essays"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              My Essays
+            </NavLink>
+            <NavLink
+              to="create-essay"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Create Essay
+            </NavLink>
+            <Button onClick={handleLogOut}>Log out</Button>
+          </>
+        ) : (
+          <>
+            <NavLink to="" className={buttonVariants({ variant: "outline" })}>
+              Feed
+            </NavLink>
+            <Button onClick={handleLogOut}>Sign In</Button>
+          </>
+        )}
       </nav>
       <main className="flex-[10_3_0%]">
-        <Outlet></Outlet>
+        <Outlet />
       </main>
     </div>
   );
