@@ -52,7 +52,7 @@ const defaultBody: bodyStateType = [
 
 export default function CreateEssay(props: ICreateEssayProps) {
   const [body, setBody] = useState<bodyStateType>(defaultBody);
-  console.log(body);
+  const { toast } = useToast();
 
   // Functions
   const handleAddParagraph = (
@@ -167,8 +167,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
 
   // Database query
 
-  const { toast } = useToast();
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     const essaysCollectionRef = collection(db, "essays");
@@ -185,6 +183,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
           conclusion: values.conclusion,
           cathegory: values.cathegory,
           comments: [],
+          likes: 0,
           author: {
             name: auth.currentUser?.displayName,
             id: auth.currentUser?.uid,
@@ -195,7 +194,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
           description: "You can see it on the page My Essays",
         });
         await form.reset();
-        console.log(body);
         setBody(defaultBody);
       } catch (err) {
         console.error(err);
@@ -316,7 +314,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
                   </div>
                   <FormControl>
                     <Input
-                      value={chapter.chapterTitle}
                       onChange={(e) => {
                         const text = e.target.value;
                         handleChapterChange(chapter.chapterId, text);
@@ -341,7 +338,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
                     <FormControl>
                       <Textarea
                         rows={10}
-                        value={par.text}
                         onChange={(e) => {
                           const text = e.target.value;
                           handleParagraphChange(
@@ -417,7 +413,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
             )}
           />
           <Button type="submit">Submit</Button>
-          <Toaster />
         </form>
       </Form>
     </div>

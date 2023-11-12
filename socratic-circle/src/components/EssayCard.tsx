@@ -1,5 +1,8 @@
-import { Comments } from "./Comments";
+import { oneEssayType } from "@/types/types";
+import scrollToTop from "@/lib/scrollToTop";
+
 // import componenets
+import { Comments } from "./Comments";
 import {
   Card,
   CardContent,
@@ -15,32 +18,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { oneEssayType } from "@/types/types";
-import { useDispatch, useSelector } from "react-redux";
-import { auth, db } from "@/config/firebase";
-import { deleteDoc, doc } from "firebase/firestore";
-import { removeData } from "@/features/essaysData";
 
 interface IEssayCard {
   essay: oneEssayType;
 }
 
 export function EssayCard({ essay }: IEssayCard) {
-  const isAuth = useSelector((state: any) => state.authState);
-  const dispatch = useDispatch();
-
-  const handleDelete = async (id: string) => {
-    const essayDoc = doc(db, "essays", id);
-    try {
-      await deleteDoc(essayDoc);
-      dispatch(removeData(id));
-    } catch (error) {
-      console.error("Error deleting essay:", error);
-    }
-  };
-
   return (
     <Card key={essay.id}>
       <CardHeader>
@@ -65,17 +50,17 @@ export function EssayCard({ essay }: IEssayCard) {
       </CardContent>
       <CardFooter className="flex flex-col">
         <div className="w-full flex justify-between">
-          <Link to={essay.id} className={buttonVariants()}>
+          <Link
+            to={essay.id}
+            onClick={scrollToTop}
+            className={buttonVariants()}
+          >
             See Essay
           </Link>
-          {isAuth && essay.author.id === auth.currentUser?.uid ? (
-            <div>
-              <Button onClick={() => handleDelete(essay.id)}>Delete</Button>
-              <Button>Edit</Button>
-            </div>
-          ) : (
+          <div>
+            <button>Likes: {essay.likes}</button>
             <Badge variant="outline">@{essay.author.name}</Badge>
-          )}
+          </div>
         </div>
         <Comments id={essay.id} />
       </CardFooter>

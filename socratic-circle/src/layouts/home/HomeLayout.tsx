@@ -37,10 +37,8 @@ export default function HomeLayout(props: IHomeLayoutProps) {
     }
   };
 
-  console.log(authState);
   const isAuth = Boolean(localStorage.getItem("isAuth"));
-  console.log(isAuth);
-  
+  //  TODO conditional navlinks render is not working
 
   return (
     <div className="flex">

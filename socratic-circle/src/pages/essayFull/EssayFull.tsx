@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { essaysDataType, oneEssayType } from "@/types/types";
 
@@ -19,26 +19,47 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { deleteDoc, doc } from "firebase/firestore";
+import { auth, db } from "@/config/firebase";
+import { removeData } from "@/features/essaysData";
+import { useToast } from "@/components/ui/use-toast";
 
+export interface IEssayFullProps {}
 
-export interface IAppProps {}
-
-export default function App(props: IAppProps) {
+export default function EssayFull(props: IEssayFullProps) {
   const essaysData: essaysDataType = useSelector(
     (state: any): essaysDataType => state.essaysData
   );
 
+  const isAuth = useSelector((state: any) => state.authState);
+  const dispatch = useDispatch();
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleDelete = async (id: string) => {
+    const essayDoc = doc(db, "essays", id);
+    try {
+      navigate(-1);
+      await deleteDoc(essayDoc);
+      dispatch(removeData(id));
+      toast({
+        title: "Your Essay has been Deleted succesfully",
+      });
+    } catch (error) {
+      console.error("Error deleting essay:", error);
+    }
+  };
 
   const selectedEssay: oneEssayType = essaysData.filter(
     (data) => data.id === id
   )[0];
 
-  const navigate = useNavigate();
-
   const handleCloseEssay = () => {
     navigate(-1);
   };
+
+  console.log(essaysData);
 
   return (
     <div>
@@ -78,10 +99,20 @@ export default function App(props: IAppProps) {
         </CardContent>
         <CardFooter>
           <div className="w-full flex justify-between">
-            <Button onClick={handleCloseEssay}>Close</Button>
+            <div className="flex">
+              <Button onClick={handleCloseEssay}>Close</Button>
+              {isAuth && selectedEssay.author.id === auth.currentUser?.uid && (
+                <div>
+                  <Button onClick={() => handleDelete(selectedEssay.id)}>
+                    Delete
+                  </Button>
+                  <Button>Edit</Button>
+                </div>
+              )}
+            </div>
+
             <Badge variant="outline">@{selectedEssay.author.name}</Badge>
           </div>
-         
         </CardFooter>
       </Card>
     </div>
