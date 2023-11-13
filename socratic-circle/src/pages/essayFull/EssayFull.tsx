@@ -59,7 +59,7 @@ export default function EssayFull(props: IEssayFullProps) {
     navigate(-1);
   };
 
-  console.log(essaysData);
+  console.log(selectedEssay);
 
   return (
     <div>
@@ -67,7 +67,7 @@ export default function EssayFull(props: IEssayFullProps) {
         <CardHeader>
           <div className="flex justify-between">
             <CardTitle>{selectedEssay.title}</CardTitle>
-            <Badge variant="secondary">{selectedEssay.cathegory}</Badge>
+            <Badge variant="secondary">{selectedEssay.category}</Badge>
           </div>
           <CardDescription>{selectedEssay.mainQuestion}</CardDescription>
         </CardHeader>
@@ -106,9 +106,7 @@ export default function EssayFull(props: IEssayFullProps) {
                   <Button onClick={() => handleDelete(selectedEssay.id)}>
                     Delete
                   </Button>
-                  <Link to={`/home/create-essay/${selectedEssay.id}`}>
-                    Edit
-                  </Link>
+                  <Link to={`/home/create-essay/${id}`}>Edit</Link>
                 </div>
               )}
             </div>

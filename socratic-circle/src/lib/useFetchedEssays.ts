@@ -5,12 +5,12 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-const useFetchEssays = () => {
+const useFetchedEssays = () => {
   const dispatch = useDispatch();
   const essaysCollectionRef = collection(db, "essays");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getEssays = async () => {
       try {
         const data = await getDocs(essaysCollectionRef);
         dispatch(
@@ -25,9 +25,8 @@ const useFetchEssays = () => {
         console.error(err);
       }
     };
-
-    fetchData();
+    getEssays();
   }, []);
 };
 
-export default useFetchEssays;
+export default useFetchedEssays;

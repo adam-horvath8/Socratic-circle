@@ -1,10 +1,11 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useNavigate, useParams } from "react-router-dom";
 import { bodyStateType, chapterType } from "../../types/types";
 
 // import componenets
@@ -28,8 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { Toaster } from "@/components/ui/toaster";
-import { useParams } from "react-router-dom";
+import scrollToTop from "@/lib/scrollToTop";
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
@@ -55,7 +55,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
   const [body, setBody] = useState<bodyStateType>(defaultBody);
   const { toast } = useToast();
   const { id } = useParams();
-  console.log(id);
+  const navigate = useNavigate();
 
   // Functions
   const handleAddParagraph = (
@@ -155,57 +155,106 @@ export default function CreateEssay(props: ICreateEssayProps) {
   };
 
   // Form validations
+
+  const fetchEssay = async (id) => {
+    const essayDocRef = doc(db, "essays", id);
+    try {
+      const essayDocSnapshot = await getDoc(essayDocRef);
+
+      if (essayDocSnapshot.exists()) {
+        const essayData = essayDocSnapshot.data();
+        console.log("Essay data:", essayData);
+        return essayData;
+      } else {
+        console.log("Document does not exist!");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting document:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        const data = await fetchEssay(id);
+        if (data) {
+          form.reset(data); // Update the form values
+          // Set the 'body' state with the fetched 'body' data
+          if (data.body) {
+            setBody(data.body);
+          }
+        }
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  const existingEssayData = id ? fetchEssay(id) : null;
+
+  const defaultValues = existingEssayData
+    ? { ...existingEssayData }
+    : {
+        title: "",
+        mainQuestion: "",
+        mainIssue: "",
+        thesis: "",
+        introduction: "",
+        conclusion: "",
+        cathegory: "",
+      };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      mainQuestion: "",
-      mainIssue: "",
-      thesis: "",
-      introduction: "",
-      conclusion: "",
-      cathegory: "",
-    },
+    defaultValues,
   });
 
   // Database query
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const essaysCollectionRef = collection(db, "essays");
 
-    const createEssay = async () => {
-      try {
-        await addDoc(essaysCollectionRef, {
-          title: values.title,
-          mainQuestion: values.mainQuestion,
-          mainIssue: values.mainIssue,
-          thesis: values.thesis,
-          introduction: values.introduction,
-          body: body,
-          conclusion: values.conclusion,
-          cathegory: values.cathegory,
-          comments: [],
-          likes: 0,
-          author: {
-            name: auth.currentUser?.displayName,
-            id: auth.currentUser?.uid,
-          },
-        });
-        toast({
-          title: "Your Essay has been submitted succesfully",
-          description: "You can see it on the page My Essays",
-        });
-        await form.reset();
-        setBody(defaultBody);
-      } catch (err) {
-        console.error(err);
-      }
+    const essayData = {
+      title: values.title,
+      mainQuestion: values.mainQuestion,
+      mainIssue: values.mainIssue,
+      thesis: values.thesis,
+      introduction: values.introduction,
+      body: body,
+      conclusion: values.conclusion,
+      cathegory: values.cathegory,
+      comments: [],
+      likes: 0,
+      author: {
+        name: auth.currentUser?.displayName,
+        id: auth.currentUser?.uid,
+      },
     };
 
-    console.log(body);
-
-    createEssay();
+    try {
+      // If id is defined, update the existing essay
+      if (id) {
+        const essayDocRef = doc(db, "essays", id);
+        await updateDoc(essayDocRef, essayData);
+        toast({
+          title: "Your Essay has been Updated successfully",
+        });
+      } else {
+        // If id is not defined, create a new essay
+        await addDoc(essaysCollectionRef, essayData);
+        toast({
+          title: "Your Essay has been Submitted successfully",
+        });
+      }
+      navigate("/home/my-essays");
+      scrollToTop();
+      await form.reset();
+      setBody(defaultBody);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
@@ -317,6 +366,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
                   </div>
                   <FormControl>
                     <Input
+                      value={chapter.chapterTitle}
                       onChange={(e) => {
                         const text = e.target.value;
                         handleChapterChange(chapter.chapterId, text);
@@ -340,6 +390,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
 
                     <FormControl>
                       <Textarea
+                        value={par.text}
                         rows={10}
                         onChange={(e) => {
                           const text = e.target.value;

@@ -37,7 +37,6 @@ export type oneEssayType = {
   thesis: string;
   title: string;
   comments?: commentType[];
-  likes: number;
 };
 
 export type essaysDataType = oneEssayType[];

@@ -19,14 +19,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
-import { Card } from "./ui/card";
+import { Card, CardHeader } from "./ui/card";
 import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
 import { Textarea } from "./ui/textarea";
+import { useSelector } from "react-redux";
 
 const formSchema = z.object({
   comment: z.string().min(2).max(500),
@@ -38,6 +40,7 @@ interface IComments {
 
 export function Comments({ id }: IComments) {
   const [comments, setComments] = useState<commentType[]>([]);
+  const authState = useSelector((state: any) => state.authState);
 
   // create Form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -129,7 +132,10 @@ export function Comments({ id }: IComments) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea {...field} />
+                      <Textarea
+                        {...field}
+                        disabled={authState ? false : true}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

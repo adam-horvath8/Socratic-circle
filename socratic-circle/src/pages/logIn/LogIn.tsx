@@ -17,7 +17,6 @@ export default function LogIn(props: ILogInProps) {
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, provider);
-      localStorage.setItem("isAuth", true.toString());
       dispatch(login(true));
       navigate("/home");
     } catch (error) {

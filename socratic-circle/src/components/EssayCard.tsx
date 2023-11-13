@@ -1,8 +1,5 @@
-import { oneEssayType } from "@/types/types";
-import scrollToTop from "@/lib/scrollToTop";
-
-// import componenets
 import { Comments } from "./Comments";
+// import componenets
 import {
   Card,
   CardContent,
@@ -20,6 +17,8 @@ import {
 } from "@/components/ui/accordion";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { oneEssayType } from "@/types/types";
+import scrollToTop from "@/lib/scrollToTop";
 
 interface IEssayCard {
   essay: oneEssayType;
@@ -51,16 +50,14 @@ export function EssayCard({ essay }: IEssayCard) {
       <CardFooter className="flex flex-col">
         <div className="w-full flex justify-between">
           <Link
-            to={essay.id}
             onClick={scrollToTop}
+            to={essay.id}
             className={buttonVariants()}
           >
             See Essay
           </Link>
-          <div>
-            <button>Likes: {essay.likes}</button>
-            <Badge variant="outline">@{essay.author.name}</Badge>
-          </div>
+
+          <Badge variant="outline">@{essay.author.name}</Badge>
         </div>
         <Comments id={essay.id} />
       </CardFooter>

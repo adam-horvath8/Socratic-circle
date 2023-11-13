@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export const authSlice = createSlice({
   name: "authState",
-  initialState: Boolean(localStorage.getItem("isAuth")),
+  initialState: false,
   reducers: {
     login: (state, action: PayloadAction<boolean>) => {
       return action.payload;
