@@ -25,12 +25,13 @@ const App = () => {
         <Route path="sign-in" element={<SignIn />} />
         <Route path="home" element={<HomeLayout />}>
           <Route index element={<Feed />} />
+          <Route path="create-essay/:id" element={<CreateEssay />} />
           <Route path="create-essay" element={<CreateEssay />} />
           <Route path="profile" element={<Profil />} />
           <Route path="my-essays" element={<MyEssays />}>
-            <Route path=":id" element={<EssayFull />} /> {/* Handle :id for my-essays */}
+            <Route path=":id" element={<EssayFull />} />
           </Route>
-          <Route path=":id" element={<EssayFull />} /> {/* Handle :id at the top level */}
+          <Route path=":id" element={<EssayFull />} />
         </Route>
         <Route path="*" element={<ErrorPage />} />
       </Route>
@@ -38,6 +39,5 @@ const App = () => {
   );
   return <RouterProvider router={router} />;
 };
-
 
 export default App;

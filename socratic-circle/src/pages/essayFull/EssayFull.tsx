@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { essaysDataType, oneEssayType } from "@/types/types";
 
 // import components
@@ -106,7 +106,9 @@ export default function EssayFull(props: IEssayFullProps) {
                   <Button onClick={() => handleDelete(selectedEssay.id)}>
                     Delete
                   </Button>
-                  <Button>Edit</Button>
+                  <Link to={`/home/create-essay/${selectedEssay.id}`}>
+                    Edit
+                  </Link>
                 </div>
               )}
             </div>

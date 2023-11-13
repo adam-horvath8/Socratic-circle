@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { useParams } from "react-router-dom";
 
 const formSchema = z.object({
   title: z.string().min(2).max(100),
@@ -53,6 +54,8 @@ const defaultBody: bodyStateType = [
 export default function CreateEssay(props: ICreateEssayProps) {
   const [body, setBody] = useState<bodyStateType>(defaultBody);
   const { toast } = useToast();
+  const { id } = useParams();
+  console.log(id);
 
   // Functions
   const handleAddParagraph = (
