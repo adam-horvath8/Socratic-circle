@@ -100,6 +100,24 @@ export default function CreateEssay(props: ICreateEssayProps) {
     });
   };
 
+  const handleDeletePar = (chapterId: string, parId: string) => {
+    setBody((prev): chapterType[] => {
+      const updatedBody = prev.map((chapter) => {
+        if (chapter.chapterId === chapterId) {
+          const filteredParagraphs = chapter.chapterParagraphs.filter(
+            (par) => par.id !== parId
+          );
+          return {
+            ...chapter,
+            chapterParagraphs: filteredParagraphs,
+          };
+        }
+        return chapter;
+      });
+      return updatedBody;
+    });
+  };
+
   const handleAddChapter = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -121,24 +139,6 @@ export default function CreateEssay(props: ICreateEssayProps) {
     if (body.length > 1) {
       setBody(filteredBodyChapters);
     }
-  };
-
-  const handleDeletePar = (chapterId: string, parId: string) => {
-    setBody((prev): chapterType[] => {
-      const updatedBody = prev.map((chapter) => {
-        if (chapter.chapterId === chapterId) {
-          const filteredParagraphs = chapter.chapterParagraphs.filter(
-            (par) => par.id !== parId
-          );
-          return {
-            ...chapter,
-            chapterParagraphs: filteredParagraphs,
-          };
-        }
-        return chapter;
-      });
-      return updatedBody;
-    });
   };
 
   const handleChapterChange = (chapterId: string, text: string) => {
@@ -226,7 +226,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
       conclusion: values.conclusion,
       cathegory: values.cathegory,
       comments: [],
-      likes: 0,
+      likes: [],
       author: {
         name: auth.currentUser?.displayName,
         id: auth.currentUser?.uid,

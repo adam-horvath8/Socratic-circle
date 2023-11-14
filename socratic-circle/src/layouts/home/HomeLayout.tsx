@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../features/auth";
 import { AuthStateType } from "@/types/types";
 import { useEffect } from "react";
+import logo from "../../assets/pic/2.png";
 
 // components import
 import { buttonVariants, Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ export default function HomeLayout(props: IHomeLayoutProps) {
   const handleLogOut = async () => {
     try {
       await signOut(auth);
-      await navigate("/");
+      navigate("/");
     } catch (err) {
       console.error(err);
     }
@@ -42,7 +43,8 @@ export default function HomeLayout(props: IHomeLayoutProps) {
 
   return (
     <div className="flex">
-      <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto p-5 gap-2">
+      <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto  p-5 gap-2 ">
+      <img src={logo} alt="" className="w-[100px] h-[100px]" />
         {authState ? (
           <>
             <NavLink to="" className={buttonVariants({ variant: "outline" })}>
@@ -77,7 +79,7 @@ export default function HomeLayout(props: IHomeLayoutProps) {
           </>
         )}
       </nav>
-      <main className="flex-[10_3_0%]">
+      <main className="flex-[16_1_0%]">
         <Outlet />
       </main>
     </div>

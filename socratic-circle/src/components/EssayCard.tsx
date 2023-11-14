@@ -19,12 +19,46 @@ import { buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { oneEssayType } from "@/types/types";
 import scrollToTop from "@/lib/scrollToTop";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "@/config/firebase";
+import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
 
 interface IEssayCard {
   essay: oneEssayType;
 }
 
 export function EssayCard({ essay }: IEssayCard) {
+  const essayDocRef = doc(db, "essays", essay.id);
+  const updateEssaysState = useUpdateEssaysState();
+
+  const handleLikes = async () => {
+    const userId = auth.currentUser?.uid;
+
+    try {
+      // Fetch the current essay document
+      const essayDoc = await getDoc(essayDocRef);
+      if (essayDoc.exists()) {
+        const essayData = essayDoc.data();
+
+        if (essayData.likes.includes(userId)) {
+          // If userId is in the array, remove it
+          const updatedLikes: string[] = essayData.likes.filter(
+            (id: string) => id !== userId
+          );
+          await updateDoc(essayDocRef, { likes: updatedLikes });
+        } else {
+          // If userId is not in the array, add it
+          const updatedLikes: string[] = [...essayData.likes, userId];
+          await updateDoc(essayDocRef, { likes: updatedLikes });
+          
+        }
+      }
+      updateEssaysState();
+    } catch (error) {
+      console.error("Error updating likes:", error);
+    }
+  };
+
   return (
     <Card key={essay.id}>
       <CardHeader>
@@ -56,8 +90,10 @@ export function EssayCard({ essay }: IEssayCard) {
           >
             See Essay
           </Link>
-
-          <Badge variant="outline">@{essay.author.name}</Badge>
+          <div>
+            <button onClick={handleLikes}>Like {essay.likes.length}</button>
+            <Badge variant="outline">@{essay.author.name}</Badge>
+          </div>
         </div>
         <Comments id={essay.id} />
       </CardFooter>
