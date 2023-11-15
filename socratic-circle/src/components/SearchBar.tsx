@@ -17,8 +17,8 @@ import { addData } from "@/features/essaysData";
 import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
 
 interface ISearchBar {
-  numberOfEssaysDisplayed?: number;
-  setDisplayMoreEssaysBtn?: (value: boolean) => void;
+  numberOfEssaysDisplayed: number
+  setDisplayMoreEssaysBtn: (value: boolean) => void
 }
 
 export function SearchBar({
@@ -100,6 +100,8 @@ export function SearchBar({
       setDisplayMoreEssaysBtn(true);
     }
   }, [searchTerm, category]);
+
+  // my-essays search bar
 
   return (
     <div className="flex gap-4">

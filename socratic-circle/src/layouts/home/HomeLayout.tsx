@@ -42,44 +42,46 @@ export default function HomeLayout(props: IHomeLayoutProps) {
   console.log(authState);
 
   return (
-    <div className="flex">
-      <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto  p-5 gap-2 ">
-      <img src={logo} alt="" className="w-[100px] h-[100px]" />
-        {authState ? (
-          <>
-            <NavLink to="" className={buttonVariants({ variant: "outline" })}>
-              Feed
-            </NavLink>
-            <NavLink
-              to="profile"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              Profile
-            </NavLink>
-            <NavLink
-              to="my-essays"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              My Essays
-            </NavLink>
-            <NavLink
-              to="create-essay"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              Create Essay
-            </NavLink>
-            <Button onClick={handleLogOut}>Log out</Button>
-          </>
-        ) : (
-          <>
-            <NavLink to="" className={buttonVariants({ variant: "outline" })}>
-              Feed
-            </NavLink>
-            <Button onClick={handleLogOut}>Sign In</Button>
-          </>
-        )}
-      </nav>
-      <main className="flex-[16_1_0%]">
+    <div className="flex relative">
+      <div className="flex-1">
+        <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto fixed p-5 gap-2 ">
+          <img src={logo} alt="" className="w-[100px] h-[100px]" />
+          {authState ? (
+            <>
+              <NavLink to="" className={buttonVariants({ variant: "outline" })}>
+                Feed
+              </NavLink>
+              <NavLink
+                to="profile"
+                className={buttonVariants({ variant: "outline" })}
+              >
+                Profile
+              </NavLink>
+              <NavLink
+                to="my-essays"
+                className={buttonVariants({ variant: "outline" })}
+              >
+                My Essays
+              </NavLink>
+              <NavLink
+                to="create-essay"
+                className={buttonVariants({ variant: "outline" })}
+              >
+                Create Essay
+              </NavLink>
+              <Button onClick={handleLogOut}>Log out</Button>
+            </>
+          ) : (
+            <>
+              <NavLink to="" className={buttonVariants({ variant: "outline" })}>
+                Feed
+              </NavLink>
+              <Button onClick={handleLogOut}>Sign In</Button>
+            </>
+          )}
+        </nav>
+      </div>
+      <main className="flex-[8_1_0%] p-20">
         <Outlet />
       </main>
     </div>

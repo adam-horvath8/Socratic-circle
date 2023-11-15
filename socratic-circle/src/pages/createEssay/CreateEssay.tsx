@@ -258,7 +258,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
   }
 
   return (
-    <div className="py-10 px-20 flex flex-col items-center">
+    <div className=" flex flex-col items-center">
       <h1>Add your New Essay!</h1>
       <Form {...form}>
         <form
