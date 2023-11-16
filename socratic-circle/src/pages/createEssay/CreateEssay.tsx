@@ -250,7 +250,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
       }
       navigate("/home/my-essays");
       scrollToTop();
-      await form.reset();
+      form.reset();
       setBody(defaultBody);
     } catch (err) {
       console.error(err);

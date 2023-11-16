@@ -54,8 +54,8 @@ export default function MyEssays(props: IMyEssaysProps) {
     getAuthEssays();
   }, []);
 
-  const handleSearch = () => {
-    const searchedData: essaysDataType = essaysData.filter(
+  const handleSearch = (dataToSearch: essaysDataType) => {
+    const searchedData: essaysDataType = dataToSearch.filter(
       (essay: oneEssayType) => {
         // Check if the essay's category matches the selected category
         const isCategoryMatch =
@@ -108,16 +108,18 @@ export default function MyEssays(props: IMyEssaysProps) {
 
   useEffect(() => {
     if (searchTerm.length > 2 || category !== "all-categories") {
-      handleSearch();
+      handleSearch(originalEssays);
     } else if (searchTerm.length === 0) {
       dispatch(addData(originalEssays));
     }
   }, [searchTerm, category]);
 
+  console.log(essaysData);
+
   return (
     <div className="flex flex-col gap-5">
       <Outlet />
-      <div className="flex">
+      <div className="flex gap-4">
         <Input
           type="search"
           placeholder="Search for Author or Term you are looking for..."
