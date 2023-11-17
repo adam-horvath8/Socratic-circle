@@ -1,16 +1,21 @@
-import * as React from "react";
 import { auth, db, provider } from "../../config/firebase";
 import { signInWithPopup } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { login } from "../../features/auth";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { ProfileDataType } from "@/types/types";
 
 //  types
 
-export interface ILogInProps {}
 
-export default function LogIn(props: ILogInProps) {
+export default function LogIn() {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -28,8 +33,9 @@ export default function LogIn(props: ILogInProps) {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        const profileData = {
+        const profileData: ProfileDataType = {
           userId: auth.currentUser?.uid,
+          userPhoto: auth.currentUser?.photoURL,
           firstName: "",
           lastName: "",
           about: "",

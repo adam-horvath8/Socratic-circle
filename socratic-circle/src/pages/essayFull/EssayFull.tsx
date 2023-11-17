@@ -18,15 +18,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { removeData } from "@/features/essaysData";
 import { useToast } from "@/components/ui/use-toast";
 
-export interface IEssayFullProps {}
-
-export default function EssayFull(props: IEssayFullProps) {
+export default function EssayFull() {
   const essaysData: essaysDataType = useSelector(
     (state: any): essaysDataType => state.essaysData
   );
@@ -67,7 +65,7 @@ export default function EssayFull(props: IEssayFullProps) {
         <CardHeader>
           <div className="flex justify-between">
             <CardTitle>{selectedEssay.title}</CardTitle>
-            <Badge variant="secondary">{selectedEssay.category}</Badge>
+            <Badge variant="secondary">{selectedEssay.cathegory}</Badge>
           </div>
           <CardDescription>{selectedEssay.mainQuestion}</CardDescription>
         </CardHeader>
@@ -100,13 +98,28 @@ export default function EssayFull(props: IEssayFullProps) {
         <CardFooter>
           <div className="w-full flex justify-between">
             <div className="flex">
-              <Button onClick={handleCloseEssay}>Close</Button>
+              <Button onClick={handleCloseEssay}>
+                <span className="material-symbols-outlined">exit_to_app</span>
+                Close
+              </Button>
               {isAuth && selectedEssay.author.id === auth.currentUser?.uid && (
                 <div>
-                  <Button onClick={() => handleDelete(selectedEssay.id)}>
+                  <Button
+                    variant={"outline"}
+                    onClick={() => handleDelete(selectedEssay.id)}
+                  >
+                    <span className="material-symbols-outlined">
+                      delete_sweep
+                    </span>
                     Delete
                   </Button>
-                  <Link to={`/home/create-essay/${id}`}>Edit</Link>
+                  <Link
+                    to={`/home/create-essay/${id}`}
+                    className={buttonVariants({ variant: "outline" })}
+                  >
+                    <span className="material-symbols-outlined">edit</span>
+                    Edit
+                  </Link>
                 </div>
               )}
             </div>

@@ -7,9 +7,7 @@ import { useEffect, useState } from "react";
 
 // components import
 
-export interface IFeedProps {}
-
-export default function Feed(props: IFeedProps) {
+export default function Home() {
   const [numberOfEssaysDisplayed, setNumberOfEssaysDisplayed] =
     useState<number>(10);
 

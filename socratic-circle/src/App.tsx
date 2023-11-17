@@ -1,4 +1,3 @@
-import React from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -8,9 +7,8 @@ import {
 
 // import pages
 import LogIn from "./pages/logIn/LogIn";
-import SignIn from "./pages/signIn/SignIn";
 import HomeLayout from "./layouts/home/HomeLayout";
-import Feed from "./pages/feed/Feed";
+import Home from "./pages/feed/Home";
 import Profil from "./pages/profil/Profil";
 import MyEssays from "./pages/myEssays/MyEssays";
 import ErrorPage from "./pages/error/ErrorPage";
@@ -22,9 +20,8 @@ const App = () => {
     createRoutesFromElements(
       <Route path="/">
         <Route index element={<LogIn />} />
-        <Route path="sign-in" element={<SignIn />} />
         <Route path="home" element={<HomeLayout />}>
-          <Route index element={<Feed />} />
+          <Route index element={<Home />} />
           <Route path="create-essay/:id" element={<CreateEssay />} />
           <Route path="create-essay" element={<CreateEssay />} />
           <Route path="profile" element={<Profil />} />

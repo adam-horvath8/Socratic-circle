@@ -29,6 +29,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
+import ProfileContainer from "@/components/ProfileContainer";
+import { ProfileDataType } from "@/types/types";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(50),
@@ -42,26 +44,9 @@ const formSchema = z.object({
   mobile: z.string().min(2).max(50),
 });
 
-export interface ProfileData {
-  id: string;
-  userId: string;
-  firstName: string;
-  lastName: string;
-  about: string;
-  degree: string;
-  school: string;
-  currentCity: string;
-  homeTown: string;
-  email: string;
-  mobile: string;
-}
-
-export interface IProfilProps {}
-
-export default function Profil(props: IProfilProps) {
-  const [profileDataState, setProfileDataState] = useState<ProfileData | null>(
-    null
-  );
+export default function Profil() {
+  const [profileDataState, setProfileDataState] =
+    useState<ProfileDataType | null>(null);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -129,11 +114,10 @@ export default function Profil(props: IProfilProps) {
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        // Assuming there is only one document for each user
-        const usersProfile: ProfileData = {
+        const usersProfile = {
           id: querySnapshot.docs[0].id,
           ...querySnapshot.docs[0].data(),
-        };
+        } as ProfileDataType;
 
         console.log(usersProfile);
 
@@ -161,7 +145,10 @@ export default function Profil(props: IProfilProps) {
     <div>
       <Dialog>
         <DialogTrigger>
-          <Button>Update Profile</Button>
+          <Button>
+            <span className="material-symbols-outlined">manage_accounts</span>
+            Update
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <Form {...form}>
@@ -310,15 +297,7 @@ export default function Profil(props: IProfilProps) {
           <AvatarFallback>CN</AvatarFallback>
         )}
       </Avatar>
-      <span>{auth.currentUser?.displayName}</span>
-      <span>{profileDataState?.firstName}</span>
-      <span>{profileDataState?.lastName}</span>
-      <span>{profileDataState?.about}</span>
-      <span>{profileDataState?.school}</span>
-      <span>{profileDataState?.currentCity}</span>
-      <span>{profileDataState?.homeTown}</span>
-      <span>{profileDataState?.email}</span>
-      <span>{profileDataState?.mobile}</span>
+      <ProfileContainer profileDataState={profileDataState} />
     </div>
   );
 }

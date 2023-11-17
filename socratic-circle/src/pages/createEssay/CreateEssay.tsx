@@ -41,8 +41,6 @@ const formSchema = z.object({
   cathegory: z.string().min(2).max(100),
 });
 
-export interface ICreateEssayProps {}
-
 const defaultBody: bodyStateType = [
   {
     chapterId: uuidv4(),
@@ -51,7 +49,7 @@ const defaultBody: bodyStateType = [
   },
 ];
 
-export default function CreateEssay(props: ICreateEssayProps) {
+export default function CreateEssay() {
   const [body, setBody] = useState<bodyStateType>(defaultBody);
   const { toast } = useToast();
   const { id } = useParams();
@@ -156,7 +154,7 @@ export default function CreateEssay(props: ICreateEssayProps) {
 
   // Form validations
 
-  const fetchEssay = async (id) => {
+  const fetchEssay = async (id: string) => {
     const essayDocRef = doc(db, "essays", id);
     try {
       const essayDocSnapshot = await getDoc(essayDocRef);
@@ -356,12 +354,14 @@ export default function CreateEssay(props: ICreateEssayProps) {
                   <div>
                     <FormLabel>Chapter Title</FormLabel>
                     {body.length > 1 && (
-                      <Button
+                      <button
                         type="button"
                         onClick={() => handleDeleteChapter(chapter.chapterId)}
                       >
-                        Delete
-                      </Button>
+                        <span className="material-symbols-outlined">
+                          delete_forever
+                        </span>
+                      </button>
                     )}
                   </div>
                   <FormControl>
@@ -379,13 +379,16 @@ export default function CreateEssay(props: ICreateEssayProps) {
                   <FormItem key={par.id}>
                     <div>
                       <FormLabel>Paragraph</FormLabel>
-                      <Button
+                      <button
+                        type="button"
                         onClick={() =>
                           handleDeletePar(chapter.chapterId, par.id)
                         }
                       >
-                        Delete
-                      </Button>
+                        <span className="material-symbols-outlined">
+                          delete_forever
+                        </span>
+                      </button>
                     </div>
 
                     <FormControl>
@@ -407,11 +410,16 @@ export default function CreateEssay(props: ICreateEssayProps) {
                 ))}
 
                 <Button
+                  variant="outline"
                   onClick={(e) => handleAddParagraph(e, chapter.chapterId)}
                 >
+                  <span className="material-symbols-outlined">
+                    playlist_add
+                  </span>
                   Add Paragraph
                 </Button>
-                <Button onClick={(e) => handleAddChapter(e)}>
+                <Button variant="outline" onClick={(e) => handleAddChapter(e)}>
+                  <span className="material-symbols-outlined">docs_add_on</span>
                   Add Chapter
                 </Button>
               </div>

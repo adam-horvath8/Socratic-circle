@@ -22,6 +22,9 @@ import scrollToTop from "@/lib/scrollToTop";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import ProfileContainer from "./ProfileContainer";
+import { useState } from "react";
 
 interface IEssayCard {
   essay: oneEssayType;
@@ -30,7 +33,7 @@ interface IEssayCard {
 export function EssayCard({ essay }: IEssayCard) {
   const essayDocRef = doc(db, "essays", essay.id);
   const updateEssaysState = useUpdateEssaysState();
-
+  const [isLiked, setIsLiked] = useState(false);
   const handleLikes = async () => {
     const userId = auth.currentUser?.uid;
 
@@ -45,19 +48,22 @@ export function EssayCard({ essay }: IEssayCard) {
           const updatedLikes: string[] = essayData.likes.filter(
             (id: string) => id !== userId
           );
+          setIsLiked(false);
           await updateDoc(essayDocRef, { likes: updatedLikes });
         } else {
           // If userId is not in the array, add it
           const updatedLikes: string[] = [...essayData.likes, userId];
+          setIsLiked(true);
           await updateDoc(essayDocRef, { likes: updatedLikes });
-          
         }
       }
-      updateEssaysState();
+      updateEssaysState(10);
     } catch (error) {
       console.error("Error updating likes:", error);
     }
   };
+
+  console.log(essay.author.id);
 
   return (
     <Card key={essay.id}>
@@ -86,13 +92,40 @@ export function EssayCard({ essay }: IEssayCard) {
           <Link
             onClick={scrollToTop}
             to={essay.id}
-            className={buttonVariants()}
+            className={buttonVariants({ variant: "secondary" })}
           >
-            See Essay
+            <span className="material-symbols-outlined">open_in_new</span>
+            Open
           </Link>
           <div>
-            <button onClick={handleLikes}>Like {essay.likes.length}</button>
-            <Badge variant="outline">@{essay.author.name}</Badge>
+            <button onClick={handleLikes}>
+              <span
+                className="material-symbols-outlined hover:text-orange-600"
+                style={{
+                  fontVariationSettings: isLiked
+                    ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                    : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                  color: isLiked ? "#EA580C" : "",
+                }}
+              >
+                thumb_up
+              </span>
+
+              {essay.likes.length}
+            </button>
+            <Dialog>
+              <DialogTrigger>
+                <Badge
+                  variant="outline"
+                  className="hover:text-orange-600 underline"
+                >
+                  @{essay.author.name}
+                </Badge>
+              </DialogTrigger>
+              <DialogContent>
+                <ProfileContainer id={essay.author.id} />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
         <Comments id={essay.id} />

@@ -15,9 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export interface IMyEssaysProps {}
 
-export default function MyEssays(props: IMyEssaysProps) {
+export default function MyEssays() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all-categories");
   const [originalEssays, setOriginalEssays] = useState<essaysDataType>([]);
@@ -99,7 +98,7 @@ export default function MyEssays(props: IMyEssaysProps) {
           );
         }
 
-        return false; // Filter out essays that don't match the selected category
+        return false;
       }
     );
 

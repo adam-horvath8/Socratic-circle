@@ -41,3 +41,18 @@ export type oneEssayType = {
 };
 
 export type essaysDataType = oneEssayType[];
+
+export type ProfileDataType = {
+  id?: string;
+  userId: string | undefined;
+  userPhoto: string | null | undefined;
+  firstName: string;
+  lastName: string;
+  about: string;
+  degree: string;
+  school: string;
+  currentCity: string;
+  homeTown: string;
+  email: string;
+  mobile: string;
+};

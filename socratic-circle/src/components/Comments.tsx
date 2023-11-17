@@ -104,7 +104,10 @@ export function Comments({ id }: IComments) {
   return (
     <Dialog>
       <DialogTrigger>
-        <Button variant={"secondary"}>Comments({comments.length})</Button>
+        <Button variant={"outline"}>
+          <span className="material-symbols-outlined">chat</span>
+          Comments({comments.length})
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

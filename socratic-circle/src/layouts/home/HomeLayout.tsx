@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../features/auth";
 import { AuthStateType } from "@/types/types";
 import { useEffect } from "react";
+
 import logo from "../../assets/pic/2.png";
 
 // components import
@@ -49,32 +50,41 @@ export default function HomeLayout(props: IHomeLayoutProps) {
           {authState ? (
             <>
               <NavLink to="" className={buttonVariants({ variant: "outline" })}>
-                Feed
+                <span className="material-symbols-outlined">home</span>
+                Home
               </NavLink>
               <NavLink
                 to="profile"
                 className={buttonVariants({ variant: "outline" })}
               >
+                <span className="material-symbols-outlined">person</span>
                 Profile
               </NavLink>
               <NavLink
                 to="my-essays"
                 className={buttonVariants({ variant: "outline" })}
               >
+                <span className="material-symbols-outlined">subject</span>
                 My Essays
               </NavLink>
               <NavLink
                 to="create-essay"
                 className={buttonVariants({ variant: "outline" })}
               >
+                <span className="material-symbols-outlined">docs_add_on</span>
                 Create Essay
               </NavLink>
-              <Button onClick={handleLogOut}>Log out</Button>
+              <Button onClick={handleLogOut}>
+                <span className="material-symbols-outlined">
+                  <span class="material-symbols-outlined">logout</span>
+                </span>
+                Log out
+              </Button>
             </>
           ) : (
             <>
               <NavLink to="" className={buttonVariants({ variant: "outline" })}>
-                Feed
+                Home
               </NavLink>
               <Button onClick={handleLogOut}>Sign In</Button>
             </>
