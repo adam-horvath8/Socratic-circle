@@ -256,7 +256,7 @@ export default function CreateEssay() {
   }
 
   return (
-    <div className=" flex flex-col items-center">
+    <div className=" flex flex-col items-center max-w-screen">
       <h1>Add your New Essay!</h1>
       <Form {...form}>
         <form
@@ -277,7 +277,7 @@ export default function CreateEssay() {
               </FormItem>
             )}
           />
-          <fieldset className="border-2 p-10">
+          <fieldset className="border-2 p-5 sm:p-10 flex flex-col gap-6">
             <legend>About</legend>
             <FormField
               control={form.control}
@@ -290,7 +290,7 @@ export default function CreateEssay() {
                     Essay
                   </FormDescription>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea rows={16} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -306,7 +306,7 @@ export default function CreateEssay() {
                     Write Problem that your are deailng with in your Essay
                   </FormDescription>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea rows={16} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -322,7 +322,7 @@ export default function CreateEssay() {
                     Write main idea that you want to present and defend
                   </FormDescription>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea rows={16} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -340,18 +340,18 @@ export default function CreateEssay() {
                   your plan to do so.
                 </FormDescription>
                 <FormControl>
-                  <Textarea rows={6} {...field} />
+                  <Textarea rows={16} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <fieldset className="border-2 p-10">
+          <fieldset className="border-2 p-5 sm:p-10 ">
             <legend>Body</legend>
             {body.map((chapter) => (
-              <div key={chapter.chapterId}>
+              <div key={chapter.chapterId} className="flex flex-col gap-4">
                 <FormItem>
-                  <div>
+                  <div className="flex items-center justify-between">
                     <FormLabel>Chapter Title</FormLabel>
                     {body.length > 1 && (
                       <button
@@ -377,7 +377,7 @@ export default function CreateEssay() {
                 </FormItem>
                 {chapter.chapterParagraphs.map((par) => (
                   <FormItem key={par.id}>
-                    <div>
+                    <div className="flex items-center justify-between">
                       <FormLabel>Paragraph</FormLabel>
                       <button
                         type="button"
@@ -394,7 +394,7 @@ export default function CreateEssay() {
                     <FormControl>
                       <Textarea
                         value={par.text}
-                        rows={10}
+                        rows={16}
                         onChange={(e) => {
                           const text = e.target.value;
                           handleParagraphChange(
@@ -408,20 +408,28 @@ export default function CreateEssay() {
                     <FormMessage />
                   </FormItem>
                 ))}
-
-                <Button
-                  variant="outline"
-                  onClick={(e) => handleAddParagraph(e, chapter.chapterId)}
-                >
-                  <span className="material-symbols-outlined">
-                    playlist_add
-                  </span>
-                  Add Paragraph
-                </Button>
-                <Button variant="outline" onClick={(e) => handleAddChapter(e)}>
-                  <span className="material-symbols-outlined">docs_add_on</span>
-                  Add Chapter
-                </Button>
+                <div className="flex my-4 gap-4">
+                  <Button
+                    variant="outline"
+                    className="flex-1 sm:flex-none"
+                    onClick={(e) => handleAddParagraph(e, chapter.chapterId)}
+                  >
+                    <span className="material-symbols-outlined">
+                      playlist_add
+                    </span>
+                    Paragraph
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1  sm:flex-none"
+                    onClick={(e) => handleAddChapter(e)}
+                  >
+                    <span className="material-symbols-outlined">
+                      docs_add_on
+                    </span>
+                    Chapter
+                  </Button>
+                </div>
               </div>
             ))}
           </fieldset>
@@ -435,7 +443,7 @@ export default function CreateEssay() {
                   Conclude what you achieved in this Essay
                 </FormDescription>
                 <FormControl>
-                  <Textarea rows={6} {...field} />
+                  <Textarea rows={16} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
