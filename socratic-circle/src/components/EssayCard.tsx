@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { oneEssayType } from "@/types/types";
 import scrollToTop from "@/lib/scrollToTop";
@@ -25,6 +25,7 @@ import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import ProfileContainer from "./ProfileContainer";
 import { useState } from "react";
+import { DetailAccordion } from "./DetailAccordion";
 
 interface IEssayCard {
   essay: oneEssayType;
@@ -68,37 +69,49 @@ export function EssayCard({ essay }: IEssayCard) {
   return (
     <Card key={essay.id}>
       <CardHeader>
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-2">
           <CardTitle>{essay.title}</CardTitle>
           <Badge variant="secondary">{essay.cathegory}</Badge>
         </div>
-        <CardDescription>{essay.mainQuestion}</CardDescription>
+        <CardDescription className="text-justify">
+          {essay.mainQuestion}
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger>More details...</AccordionTrigger>
-            <AccordionContent>
-              <h2>Main Problem</h2>
-              <p>{essay.mainIssue}</p>
-              <h2>Thesis</h2>
-              <p>{essay.thesis}</p>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <DetailAccordion selectedEssay={essay} />
       </CardContent>
       <CardFooter className="flex flex-col">
-        <div className="w-full flex justify-between">
+        <div className="w-full flex flex-col justify-between gap-2 items-center mb-4 sm:flex-row">
           <Link
             onClick={scrollToTop}
             to={essay.id}
-            className={buttonVariants({ variant: "secondary" })}
+            className="w-full sm:w-auto"
           >
-            <span className="material-symbols-outlined">open_in_new</span>
-            Open
+            <Button variant="secondary" className="w-full flex justify-center">
+              <span className="material-symbols-outlined">open_in_new</span>
+              Open
+            </Button>
           </Link>
-          <div>
-            <button onClick={handleLikes}>
+          <div className="w-full flex items-center justify-between gap-2 sm:justify-end">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  className="hover:text-orange-600 underline text-sm text-clip"
+                >
+                  @{essay.author.name}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-screen  overflow-auto">
+                <ProfileContainer id={essay.author.id} />
+              </DialogContent>
+            </Dialog>
+
+            <Button
+              onClick={handleLikes}
+              variant="outline"
+              className="flex border-2 rounded-md"
+            >
               <span
                 className="material-symbols-outlined hover:text-orange-600"
                 style={{
@@ -112,20 +125,7 @@ export function EssayCard({ essay }: IEssayCard) {
               </span>
 
               {essay.likes.length}
-            </button>
-            <Dialog>
-              <DialogTrigger>
-                <Badge
-                  variant="outline"
-                  className="hover:text-orange-600 underline"
-                >
-                  @{essay.author.name}
-                </Badge>
-              </DialogTrigger>
-              <DialogContent>
-                <ProfileContainer id={essay.author.id} />
-              </DialogContent>
-            </Dialog>
+            </Button>
           </div>
         </div>
         <Comments id={essay.id} />

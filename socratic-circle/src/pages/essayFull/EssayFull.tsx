@@ -1,3 +1,4 @@
+import { DetailAccordion } from "../../components/DetailAccordion";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { essaysDataType, oneEssayType } from "@/types/types";
@@ -12,12 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
 import { Button, buttonVariants } from "@/components/ui/button";
 import { deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
@@ -63,68 +59,57 @@ export default function EssayFull() {
     <div>
       <Card>
         <CardHeader>
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <CardTitle>{selectedEssay.title}</CardTitle>
             <Badge variant="secondary">{selectedEssay.cathegory}</Badge>
           </div>
-          <CardDescription>{selectedEssay.mainQuestion}</CardDescription>
+          <CardDescription className="text-justify">
+            {selectedEssay.mainQuestion}
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-              <AccordionTrigger>More details...</AccordionTrigger>
-              <AccordionContent>
-                <h2>Main Problem</h2>
-                <p>{selectedEssay.mainIssue}</p>
-                <h2>Thesis</h2>
-                <p>{selectedEssay.thesis}</p>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-          <h2>Introduction</h2>
-          <p>{selectedEssay.introduction}</p>
-          <h2>Body</h2>
+        <CardContent className="font-times">
+          <DetailAccordion selectedEssay={selectedEssay} />
+          <h2 className="text-3xl mb-2">Introduction</h2>
+          <p className="text-justify mb-6">{selectedEssay.introduction}</p>
           {selectedEssay.body.map((chapter) => (
             <div key={chapter.chapterId}>
-              <h3>{chapter.chapterTitle}</h3>
+              <h3 className="text-3xl mb-2">{chapter.chapterTitle}</h3>
               {chapter.chapterParagraphs.map((par) => (
-                <p key={par.id}>{par.text}</p>
+                <p className="text-justify mb-6" key={par.id}>
+                  {par.text}
+                </p>
               ))}
             </div>
           ))}
-          <h2>Conslusion</h2>
-          <p>{selectedEssay.conclusion}</p>
+          <h2 className="text-3xl mb-2 ">Conslusion</h2>
+          <p className="text-justify">{selectedEssay.conclusion}</p>
         </CardContent>
         <CardFooter>
-          <div className="w-full flex justify-between">
-            <div className="flex">
-              <Button onClick={handleCloseEssay}>
-                <span className="material-symbols-outlined">exit_to_app</span>
-                Close
-              </Button>
-              {isAuth && selectedEssay.author.id === auth.currentUser?.uid && (
-                <div>
-                  <Button
-                    variant={"outline"}
-                    onClick={() => handleDelete(selectedEssay.id)}
-                  >
-                    <span className="material-symbols-outlined">
-                      delete_sweep
-                    </span>
-                    Delete
-                  </Button>
-                  <Link
-                    to={`/home/create-essay/${id}`}
-                    className={buttonVariants({ variant: "outline" })}
-                  >
-                    <span className="material-symbols-outlined">edit</span>
-                    Edit
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <Badge variant="outline">@{selectedEssay.author.name}</Badge>
+          <div className=" flex flex-col w-full gap-2 sm:justify-between sm:flex-row">
+            <Button onClick={handleCloseEssay} className="flex justify-center">
+              <span className="material-symbols-outlined">exit_to_app</span>
+              Close
+            </Button>
+            {isAuth && selectedEssay.author.id === auth.currentUser?.uid && (
+              <div className="flex justify-between sm: gap-2">
+                <Button
+                  variant={"outline"}
+                  onClick={() => handleDelete(selectedEssay.id)}
+                >
+                  <span className="material-symbols-outlined">
+                    delete_sweep
+                  </span>
+                  Delete
+                </Button>
+                <Link
+                  to={`/home/create-essay/${id}`}
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  <span className="material-symbols-outlined">edit</span>
+                  Edit
+                </Link>
+              </div>
+            )}
           </div>
         </CardFooter>
       </Card>

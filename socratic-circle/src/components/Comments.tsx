@@ -112,14 +112,14 @@ export function Comments({ id }: IComments) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Comments</DialogTitle>
-          <Card className="flex flex-col gap-2 p-2">
+          <Card className="flex flex-col gap-2 p-2 overflow-auto h-[40vh]">
             {comments.map((item) => (
               <div
                 key={item.commentId}
-                className="border-b-2 rounded-sm flex flex-col"
+                className="border-b-2 rounded-sm flex flex-col "
               >
                 <Badge variant="secondary">{item.authorName}</Badge>
-                <p className="break-all">{item.comment}</p>
+                <p className="text-start py-2">{item.comment}</p>
               </div>
             ))}
           </Card>

@@ -14,7 +14,6 @@ import { buttonVariants, Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -53,7 +52,11 @@ export default function HomeLayout(props: IHomeLayoutProps) {
       <DropdownMenu>
         <div className="flex flex-col w-screen sm:hidden">
           <DropdownMenuTrigger className="bg-orange-600 fixed w-screen min-h-[3rem] p-1">
-            <img src={logo} alt="" className="w-[40px] h-[45px] absolute top-0" />
+            <img
+              src={logo}
+              alt=""
+              className="w-[40px] h-[45px] absolute top-0"
+            />
             <span className="material-symbols-outlined flex justify-center">
               menu
             </span>
@@ -122,9 +125,9 @@ export default function HomeLayout(props: IHomeLayoutProps) {
         </div>
       </DropdownMenu>
 
-      <div className="flex-1 hidden sm:block">
+      <div className="hidden sm:block">
         <nav className="bg-orange-600 text-white min-h-screen flex flex-col flex-auto  p-5 gap-2 fixed">
-          <img src={logo} alt="" className="w-[100px] h-[100px]" />
+          <img src={logo} alt="" className="w-[100px] h-[100px] self-center" />
           {authState ? (
             <>
               <NavLink to="" className={buttonVariants({ variant: "outline" })}>
@@ -170,7 +173,7 @@ export default function HomeLayout(props: IHomeLayoutProps) {
         </nav>
       </div>
 
-      <main className="flex-[8_1_0%] p-5 mt-[3rem] sm:mt-0 sm:p-10 lg:p-20">
+      <main className="flex-[8_1_0%] p-5 mt-[3rem] sm:ml-44  sm:mt-0 sm:p-10 lg:p-20">
         <Outlet />
       </main>
     </div>

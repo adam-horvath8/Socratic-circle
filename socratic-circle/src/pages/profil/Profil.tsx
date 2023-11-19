@@ -142,9 +142,9 @@ export default function Profil() {
   console.log(profileDataState);
 
   return (
-    <div>
+    <div className="flex flex-col items-center lg:px-20">
       <Dialog>
-        <DialogTrigger>
+        <DialogTrigger className="self-start">
           <Button>
             <span className="material-symbols-outlined">manage_accounts</span>
             Update
@@ -153,12 +153,12 @@ export default function Profil() {
         <DialogContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <fieldset className="flex">
+              <fieldset className="flex gap-2">
                 <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -171,7 +171,7 @@ export default function Profil() {
                   control={form.control}
                   name="lastName"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -186,7 +186,7 @@ export default function Profil() {
                 control={form.control}
                 name="about"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem >
                     <FormLabel>About</FormLabel>
                     <FormControl>
                       <Textarea placeholder="shadcn" {...field} />
@@ -198,12 +198,12 @@ export default function Profil() {
                   </FormItem>
                 )}
               />
-              <fieldset className="flex">
+              <fieldset className="flex gap-2 justify-between">
                 <FormField
                   control={form.control}
                   name="degree"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Highest Degree</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -216,7 +216,7 @@ export default function Profil() {
                   control={form.control}
                   name="school"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>School</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -227,12 +227,12 @@ export default function Profil() {
                 />
               </fieldset>
 
-              <fieldset className="flex">
+              <fieldset className="flex gap-2">
                 <FormField
                   control={form.control}
                   name="currentCity"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Current City</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -245,7 +245,7 @@ export default function Profil() {
                   control={form.control}
                   name="homeTown"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Home Town</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -256,12 +256,12 @@ export default function Profil() {
                 />
               </fieldset>
 
-              <fieldset className="flex">
+              <fieldset className="flex gap-2">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -274,7 +274,7 @@ export default function Profil() {
                   control={form.control}
                   name="mobile"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
                         <Input placeholder="shadcn" {...field} />
@@ -290,7 +290,7 @@ export default function Profil() {
           </Form>
         </DialogContent>
       </Dialog>
-      <Avatar>
+      <Avatar className="m-6">
         {photoURL ? (
           <AvatarImage src={photoURL} />
         ) : (
