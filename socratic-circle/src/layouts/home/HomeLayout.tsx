@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import {  NavLink, Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../config/firebase";
@@ -130,12 +130,17 @@ export default function HomeLayout(props: IHomeLayoutProps) {
           <img src={logo} alt="" className="w-[100px] h-[100px] self-center" />
           {authState ? (
             <>
-              <NavLink to="" className={buttonVariants({ variant: "outline" })}>
+              <NavLink
+                to="home"
+                activeClassName="active"
+                className={buttonVariants({ variant: "outline" })}
+              >
                 <span className="material-symbols-outlined">home</span>
                 Home
               </NavLink>
               <NavLink
                 to="profile"
+                activeClassName="active"
                 className={buttonVariants({ variant: "outline" })}
               >
                 <span className="material-symbols-outlined">person</span>
@@ -143,12 +148,14 @@ export default function HomeLayout(props: IHomeLayoutProps) {
               </NavLink>
               <NavLink
                 to="my-essays"
+                activeClassName="active"
                 className={buttonVariants({ variant: "outline" })}
               >
                 <span className="material-symbols-outlined">subject</span>
                 My Essays
               </NavLink>
               <NavLink
+                activeClassName="active"
                 to="create-essay"
                 className={buttonVariants({ variant: "outline" })}
               >

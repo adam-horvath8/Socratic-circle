@@ -20,8 +20,8 @@ const App = () => {
     createRoutesFromElements(
       <Route path="/">
         <Route index element={<LogIn />} />
-        <Route path="home" element={<HomeLayout />}>
-          <Route index element={<Home />} />
+        <Route path="in" element={<HomeLayout />}>
+          <Route path="home" element={<Home />} />
           <Route path="create-essay/:id" element={<CreateEssay />} />
           <Route path="create-essay" element={<CreateEssay />} />
           <Route path="profile" element={<Profil />} />

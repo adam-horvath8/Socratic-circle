@@ -31,6 +31,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import ProfileContainer from "@/components/ProfileContainer";
 import { ProfileDataType } from "@/types/types";
+import { onAuthStateChanged } from "firebase/auth";
+import { authPromise } from "@/lib/authPromise";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(50),
@@ -107,6 +109,8 @@ export default function Profil() {
 
   const getUserProfile = async () => {
     try {
+      await authPromise;
+
       const q = query(
         collection(db, "profiles"),
         where("userId", "==", auth.currentUser?.uid)
@@ -134,9 +138,6 @@ export default function Profil() {
 
   useEffect(() => {
     form.reset(initialFormValues);
-    if (auth.currentUser === null) {
-      navigate("/home");
-    }
   }, [profileDataState]);
 
   console.log(profileDataState);
@@ -186,7 +187,7 @@ export default function Profil() {
                 control={form.control}
                 name="about"
                 render={({ field }) => (
-                  <FormItem >
+                  <FormItem>
                     <FormLabel>About</FormLabel>
                     <FormControl>
                       <Textarea placeholder="shadcn" {...field} />

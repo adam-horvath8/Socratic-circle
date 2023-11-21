@@ -81,6 +81,6 @@
 
 @layer components {
   .active {
-    @apply bg-accent text-orange-600;
+    @apply bg-accent text-orange-600 !important;
   }
 }

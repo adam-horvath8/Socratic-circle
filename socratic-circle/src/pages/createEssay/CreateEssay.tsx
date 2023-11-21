@@ -246,7 +246,7 @@ export default function CreateEssay() {
           title: "Your Essay has been Submitted successfully",
         });
       }
-      navigate("/home/my-essays");
+      navigate("/in/my-essays");
       scrollToTop();
       form.reset();
       setBody(defaultBody);

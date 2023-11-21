@@ -14,36 +14,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { onAuthStateChanged } from "firebase/auth";
+import { authPromise } from "@/lib/authPromise";
 
 export default function MyEssays() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all-categories");
   const [originalEssays, setOriginalEssays] = useState<essaysDataType>([]);
 
-  const navigate = useNavigate();
   const essaysCollectionRef = collection(db, "essays");
   const essaysData = useSelector((state: any) => state.essaysData);
   const dispatch = useDispatch();
 
   const getAuthEssays = async () => {
     try {
-      const user = auth.currentUser;
-      if (user && user.uid) {
-        const q = query(
-          essaysCollectionRef,
-          where("author.id", "==", auth.currentUser?.uid)
-        );
-        const data = await getDocs(q);
-        const essays = data.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as essaysDataType;
-        dispatch(addData(essays));
-        setOriginalEssays(essays);
-      } else {
-        navigate("/home");
-      }
+      await authPromise;
+
+      const q = query(
+        essaysCollectionRef,
+        where("author.id", "==", auth.currentUser?.uid)
+      );
+      const data = await getDocs(q);
+      const essays = data.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as essaysDataType;
+      dispatch(addData(essays));
+      setOriginalEssays(essays);
     } catch (err) {
       console.error(err);
     }

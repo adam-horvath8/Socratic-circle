@@ -9,13 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button, buttonVariants } from "@/components/ui/button";
+
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { oneEssayType } from "@/types/types";
 import scrollToTop from "@/lib/scrollToTop";
@@ -24,8 +19,10 @@ import { auth, db } from "@/config/firebase";
 import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import ProfileContainer from "./ProfileContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DetailAccordion } from "./DetailAccordion";
+import { useDispatch, useSelector } from "react-redux";
+import { updateData } from "@/features/essaysData";
 
 interface IEssayCard {
   essay: oneEssayType;
@@ -33,8 +30,14 @@ interface IEssayCard {
 
 export function EssayCard({ essay }: IEssayCard) {
   const essayDocRef = doc(db, "essays", essay.id);
-  const updateEssaysState = useUpdateEssaysState();
+  const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(false);
+  const essaysData = useSelector((state: any) => state.essaysData);
+  useEffect(() => {
+    // This will run whenever essaysData changes
+    console.log("Updated essaysData:", essaysData);
+  }, [essaysData]);
+
   const handleLikes = async () => {
     const userId = auth.currentUser?.uid;
 
@@ -50,21 +53,27 @@ export function EssayCard({ essay }: IEssayCard) {
             (id: string) => id !== userId
           );
           setIsLiked(false);
+
           await updateDoc(essayDocRef, { likes: updatedLikes });
+
+          // Correct usage
+          dispatch(updateData({ id: essay.id, likes: updatedLikes }));
         } else {
           // If userId is not in the array, add it
           const updatedLikes: string[] = [...essayData.likes, userId];
+
           setIsLiked(true);
+
           await updateDoc(essayDocRef, { likes: updatedLikes });
+
+          // Correct usage
+          dispatch(updateData({ id: essay.id, likes: updatedLikes }));
         }
       }
-      updateEssaysState(10);
     } catch (error) {
       console.error("Error updating likes:", error);
     }
   };
-
-  console.log(essay.author.id);
 
   return (
     <Card key={essay.id}>
@@ -84,7 +93,7 @@ export function EssayCard({ essay }: IEssayCard) {
         <div className="w-full flex flex-col justify-between gap-2 items-center mb-4 sm:flex-row">
           <Link
             onClick={scrollToTop}
-            to={essay.id}
+            to={`/in/${essay.id}`}
             className="w-full sm:w-auto"
           >
             <Button variant="secondary" className="w-full flex justify-center">

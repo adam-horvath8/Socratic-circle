@@ -19,6 +19,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { removeData } from "@/features/essaysData";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 export default function EssayFull() {
   const essaysData: essaysDataType = useSelector(
@@ -45,15 +46,14 @@ export default function EssayFull() {
     }
   };
 
-  const selectedEssay: oneEssayType = essaysData.filter(
-    (data) => data.id === id
-  )[0];
+
+  const selectedEssay: oneEssayType = essaysData.find((data) => data.id === id);
 
   const handleCloseEssay = () => {
     navigate(-1);
   };
 
-  console.log(selectedEssay);
+  console.log(essaysData);
 
   return (
     <div>
@@ -102,7 +102,7 @@ export default function EssayFull() {
                   Delete
                 </Button>
                 <Link
-                  to={`/home/create-essay/${id}`}
+                  to={`/in/create-essay/${id}`}
                   className={buttonVariants({ variant: "outline" })}
                 >
                   <span className="material-symbols-outlined">edit</span>
