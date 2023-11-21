@@ -1,4 +1,4 @@
-import {  NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../config/firebase";
@@ -17,9 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export interface IHomeLayoutProps {}
-
-export default function HomeLayout(props: IHomeLayoutProps) {
+export default function HomeLayout() {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -66,7 +64,7 @@ export default function HomeLayout(props: IHomeLayoutProps) {
               {authState ? (
                 <>
                   <NavLink
-                    to=""
+                    to="home"
                     className={
                       buttonVariants({ variant: "outline" }) + "flex-1"
                     }
@@ -132,7 +130,6 @@ export default function HomeLayout(props: IHomeLayoutProps) {
             <>
               <NavLink
                 to="home"
-                activeClassName="active"
                 className={buttonVariants({ variant: "outline" })}
               >
                 <span className="material-symbols-outlined">home</span>
@@ -140,7 +137,6 @@ export default function HomeLayout(props: IHomeLayoutProps) {
               </NavLink>
               <NavLink
                 to="profile"
-                activeClassName="active"
                 className={buttonVariants({ variant: "outline" })}
               >
                 <span className="material-symbols-outlined">person</span>
@@ -148,14 +144,12 @@ export default function HomeLayout(props: IHomeLayoutProps) {
               </NavLink>
               <NavLink
                 to="my-essays"
-                activeClassName="active"
                 className={buttonVariants({ variant: "outline" })}
               >
                 <span className="material-symbols-outlined">subject</span>
                 My Essays
               </NavLink>
               <NavLink
-                activeClassName="active"
                 to="create-essay"
                 className={buttonVariants({ variant: "outline" })}
               >
@@ -163,24 +157,26 @@ export default function HomeLayout(props: IHomeLayoutProps) {
                 Create Essay
               </NavLink>
               <Button onClick={handleLogOut}>
-                <span className="material-symbols-outlined">
-                  <span className="material-symbols-outlined">logout</span>
-                </span>
+                <span className="material-symbols-outlined">logout</span>
                 Log out
               </Button>
             </>
           ) : (
             <>
               <NavLink to="" className={buttonVariants({ variant: "outline" })}>
+                <span className="material-symbols-outlined">home</span>
                 Home
               </NavLink>
-              <Button onClick={handleLogOut}>Sign In</Button>
+
+              <Button onClick={handleLogOut}>
+                <span className="material-symbols-outlined">logout</span>Sign In
+              </Button>
             </>
           )}
         </nav>
       </div>
 
-      <main className="flex-[8_1_0%] p-5 mt-[3rem] sm:ml-44  sm:mt-0 sm:p-10 lg:p-20">
+      <main className="flex-[8_1_0%] p-5 mt-[3rem] sm:ml-44  sm:mt-0 sm:p-10 lg:px-40">
         <Outlet />
       </main>
     </div>

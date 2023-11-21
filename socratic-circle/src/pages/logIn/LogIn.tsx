@@ -79,7 +79,7 @@ export default function LogIn() {
           onClick={signInWithGoogle}
         >
           <img src={google} alt="google logo" />
-          Sign in with Google
+          Sign in with Gmail
         </Button>
       </div>
     </div>

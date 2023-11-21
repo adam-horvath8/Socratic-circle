@@ -4,7 +4,7 @@ export const authSlice = createSlice({
   name: "authState",
   initialState: false,
   reducers: {
-    login: (state, action: PayloadAction<boolean>) => {
+    login: (_, action: PayloadAction<boolean>) => {
       return action.payload;
     },
   },

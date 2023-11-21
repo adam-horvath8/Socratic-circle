@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { essaysDataType, oneEssayType } from "@/types/types";
+import { essaysDataType } from "@/types/types";
 
 export const essaysDataSlice = createSlice({
   name: "essaysData",
   initialState: [] as essaysDataType,
   reducers: {
-    addData: (state, action: PayloadAction<essaysDataType>) => {
+    addData: (_, action: PayloadAction<essaysDataType>) => {
       return action.payload;
     },
     updateData: (

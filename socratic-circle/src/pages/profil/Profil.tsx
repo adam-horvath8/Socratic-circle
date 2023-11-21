@@ -26,31 +26,28 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import ProfileContainer from "@/components/ProfileContainer";
 import { ProfileDataType } from "@/types/types";
-import { onAuthStateChanged } from "firebase/auth";
 import { authPromise } from "@/lib/authPromise";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
-  about: z.string().min(2).max(500),
-  degree: z.string().min(2).max(50),
-  school: z.string().min(2).max(50),
-  currentCity: z.string().min(2).max(50),
-  homeTown: z.string().min(2).max(50),
-  email: z.string().min(2).max(50),
-  mobile: z.string().min(2).max(50),
+  about: z.string().max(500).optional(),
+  degree: z.string().max(50).optional(),
+  school: z.string().max(50).optional(),
+  currentCity: z.string().max(50).optional(),
+  homeTown: z.string().max(50).optional(),
+  email: z.string().max(50).optional(),
+  mobile: z.string().max(50).optional(),
 });
 
 export default function Profil() {
   const [profileDataState, setProfileDataState] =
     useState<ProfileDataType | null>(null);
 
-  const navigate = useNavigate();
   const { toast } = useToast();
   const photoURL = auth.currentUser?.photoURL;
 
@@ -143,7 +140,7 @@ export default function Profil() {
   console.log(profileDataState);
 
   return (
-    <div className="flex flex-col items-center lg:px-20">
+    <div className="flex flex-col items-center ">
       <Dialog>
         <DialogTrigger className="self-start">
           <Button>
@@ -162,7 +159,7 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Peter" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -175,7 +172,7 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Dvorský" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -190,7 +187,10 @@ export default function Profil() {
                   <FormItem>
                     <FormLabel>About</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="shadcn" {...field} />
+                      <Textarea
+                        placeholder="Hello, my name is Peter. I am 30 years old..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
                       Describe your self in few sentences
@@ -207,7 +207,7 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>Highest Degree</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Mgr. of Philosophy" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -220,7 +220,10 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>School</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input
+                          placeholder="Oxford Univesity, London"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -236,7 +239,7 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>Current City</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Prague, CZ" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -249,7 +252,7 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>Home Town</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="Nitra, SK" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -265,7 +268,11 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input
+                          placeholder="email@email.com"
+                          type="email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -278,7 +285,7 @@ export default function Profil() {
                     <FormItem className="flex-1">
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="shadcn" {...field} />
+                        <Input placeholder="+421..." type="tel" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

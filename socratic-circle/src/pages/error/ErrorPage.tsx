@@ -1,14 +1,15 @@
+import { buttonVariants } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
-export interface IErrorPageProps {
-}
 
-export default function ErrorPage (props: IErrorPageProps) {
+
+export default function ErrorPage() {
   return (
-    <div>
-      Error Page
+    <div className="w-screen h-screen flex flex-col gap-6 justify-center items-center">
+      <h1>Page not Found</h1>
+      <Link to="in/home" className={buttonVariants()}>
+        Go to Home Page
+      </Link>
     </div>
   );
 }
-
-
-

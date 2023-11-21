@@ -87,11 +87,18 @@ export default function CreateEssay() {
   ) => {
     setBody((prevBody) => {
       const updatedBody = [...prevBody];
-      const paragraphToUpdate = updatedBody
-        .find((chapter) => chapter.chapterId === chapterId)
-        .chapterParagraphs.find((par) => par.id === paragraphId);
-      if (paragraphToUpdate) {
-        paragraphToUpdate.text = text;
+      const chapterToUpdate = updatedBody.find(
+        (chapter) => chapter.chapterId === chapterId
+      );
+
+      if (chapterToUpdate) {
+        const paragraphToUpdate = chapterToUpdate.chapterParagraphs.find(
+          (par) => par.id === paragraphId
+        );
+
+        if (paragraphToUpdate) {
+          paragraphToUpdate.text = text;
+        }
       }
 
       return updatedBody;

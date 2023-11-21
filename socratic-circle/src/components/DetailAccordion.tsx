@@ -1,5 +1,4 @@
 import { oneEssayType } from "@/types/types";
-import React from "react";
 import {
   Accordion,
   AccordionContent,

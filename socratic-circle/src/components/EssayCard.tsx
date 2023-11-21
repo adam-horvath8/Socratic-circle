@@ -16,7 +16,6 @@ import { oneEssayType } from "@/types/types";
 import scrollToTop from "@/lib/scrollToTop";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
-import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import ProfileContainer from "./ProfileContainer";
 import { useEffect, useState } from "react";
@@ -33,14 +32,18 @@ export function EssayCard({ essay }: IEssayCard) {
   const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(false);
   const essaysData = useSelector((state: any) => state.essaysData);
+  const userId = auth.currentUser?.uid;
+
   useEffect(() => {
     // This will run whenever essaysData changes
-    console.log("Updated essaysData:", essaysData);
+    const result = essaysData
+      .find((item: oneEssayType) => item.id === essay.id)
+      .likes.includes(userId);
+
+    setIsLiked(result);
   }, [essaysData]);
 
   const handleLikes = async () => {
-    const userId = auth.currentUser?.uid;
-
     try {
       // Fetch the current essay document
       const essayDoc = await getDoc(essayDocRef);
@@ -52,7 +55,6 @@ export function EssayCard({ essay }: IEssayCard) {
           const updatedLikes: string[] = essayData.likes.filter(
             (id: string) => id !== userId
           );
-          setIsLiked(false);
 
           await updateDoc(essayDocRef, { likes: updatedLikes });
 
@@ -61,8 +63,6 @@ export function EssayCard({ essay }: IEssayCard) {
         } else {
           // If userId is not in the array, add it
           const updatedLikes: string[] = [...essayData.likes, userId];
-
-          setIsLiked(true);
 
           await updateDoc(essayDocRef, { likes: updatedLikes });
 

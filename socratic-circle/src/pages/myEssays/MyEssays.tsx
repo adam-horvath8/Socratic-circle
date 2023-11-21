@@ -1,7 +1,7 @@
 import { auth, db } from "@/config/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { EssayCard } from "@/components/EssayCard";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { essaysDataType, oneEssayType } from "@/types/types";
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -14,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { onAuthStateChanged } from "firebase/auth";
 import { authPromise } from "@/lib/authPromise";
 
 export default function MyEssays() {
