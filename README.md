@@ -4,4 +4,4 @@ Socratic Circle is a social media website for philosophers to connect and share 
 
 ## Screenshots
 Sign in with Gmail
-![login](/ReadmePics/login.png)
+![login Image](ReadmePics/login.png)
