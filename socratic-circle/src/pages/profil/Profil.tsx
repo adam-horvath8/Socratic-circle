@@ -31,6 +31,7 @@ import { useEffect, useState } from "react";
 import ProfileContainer from "@/components/ProfileContainer";
 import { ProfileDataType } from "@/types/types";
 import { authPromise } from "@/lib/authPromise";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const formSchema = z.object({
   firstName: z.string().min(2).max(50),
@@ -47,6 +48,8 @@ const formSchema = z.object({
 export default function Profil() {
   const [profileDataState, setProfileDataState] =
     useState<ProfileDataType | null>(null);
+  const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { toast } = useToast();
   const photoURL = auth.currentUser?.photoURL;
@@ -123,9 +126,13 @@ export default function Profil() {
         console.log(usersProfile);
 
         setProfileDataState(usersProfile);
+      } else {
+        setError("Error: Could not get the data");
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -141,171 +148,200 @@ export default function Profil() {
 
   return (
     <div className="flex flex-col items-center ">
-      <Dialog>
-        <DialogTrigger className="self-start">
-          <Button>
-            <span className="material-symbols-outlined">manage_accounts</span>
-            Update
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <fieldset className="flex gap-2">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Peter" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Dvorský" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </fieldset>
+      {loading ? (
+        <div className="flex flex-col items-center gap-5">
+          <Skeleton className="w-[200px] h-[200px] rounded-full" />
+          <Skeleton className="w-[1000px] h-[200px] " />
+          <div className="w-[1000px] h-[300px] grid grid-cols-2 gap-6">
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </div>
+        </div>
+      ) : error ? (
+        <span className="text-3xl">{error}</span>
+      ) : (
+        <>
+          <Dialog>
+            <DialogTrigger className="self-start">
+              <Button>
+                <span className="material-symbols-outlined">
+                  manage_accounts
+                </span>
+                Update
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
+                  <fieldset className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>First Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Peter" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Last Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Dvorský" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </fieldset>
 
-              <FormField
-                control={form.control}
-                name="about"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>About</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Hello, my name is Peter. I am 30 years old..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Describe your self in few sentences
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <fieldset className="flex gap-2 justify-between">
-                <FormField
-                  control={form.control}
-                  name="degree"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Highest Degree</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Mgr. of Philosophy" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="school"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>School</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Oxford Univesity, London"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </fieldset>
+                  <FormField
+                    control={form.control}
+                    name="about"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>About</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Hello, my name is Peter. I am 30 years old..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Describe your self in few sentences
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <fieldset className="flex gap-2 justify-between">
+                    <FormField
+                      control={form.control}
+                      name="degree"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Highest Degree</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Mgr. of Philosophy"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="school"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>School</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Oxford Univesity, London"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </fieldset>
 
-              <fieldset className="flex gap-2">
-                <FormField
-                  control={form.control}
-                  name="currentCity"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Current City</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Prague, CZ" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="homeTown"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Home Town</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nitra, SK" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </fieldset>
+                  <fieldset className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name="currentCity"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Current City</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Prague, CZ" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="homeTown"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Home Town</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nitra, SK" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </fieldset>
 
-              <fieldset className="flex gap-2">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="email@email.com"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="mobile"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="+421..." type="tel" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </fieldset>
+                  <fieldset className="flex gap-2">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="email@email.com"
+                              type="email"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="mobile"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Phone Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="+421..."
+                              type="tel"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </fieldset>
 
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-      <Avatar className="m-6">
-        {photoURL ? (
-          <AvatarImage src={photoURL} />
-        ) : (
-          <AvatarFallback>CN</AvatarFallback>
-        )}
-      </Avatar>
-      <ProfileContainer profileDataState={profileDataState} />
+                  <Button type="submit">Submit</Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+          <Avatar className="m-6">
+            {photoURL ? (
+              <AvatarImage src={photoURL} />
+            ) : (
+              <AvatarFallback>CN</AvatarFallback>
+            )}
+          </Avatar>
+          <ProfileContainer profileDataState={profileDataState} />
+        </>
+      )}
     </div>
   );
 }

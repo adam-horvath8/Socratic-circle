@@ -32,7 +32,7 @@ export function SearchBar({
 
   const dispatch = useDispatch();
 
-  const getEssaysData = useUpdateEssaysState();
+  const { getEssays } = useUpdateEssaysState();
 
   const handleSearch = async () => {
     try {
@@ -96,7 +96,7 @@ export function SearchBar({
       handleSearch();
       setDisplayMoreEssaysBtn(false);
     } else if (searchTerm.length === 0) {
-      getEssaysData(numberOfEssaysDisplayed);
+      getEssays(numberOfEssaysDisplayed);
       setDisplayMoreEssaysBtn(true);
     }
   }, [searchTerm, category]);

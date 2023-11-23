@@ -15,11 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { authPromise } from "@/lib/authPromise";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MyEssays() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all-categories");
   const [originalEssays, setOriginalEssays] = useState<essaysDataType>([]);
+  const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState(true);
 
   const essaysCollectionRef = collection(db, "essays");
   const essaysData = useSelector((state: any) => state.essaysData);
@@ -34,6 +37,10 @@ export default function MyEssays() {
         where("author.id", "==", auth.currentUser?.uid)
       );
       const data = await getDocs(q);
+
+      if (data.empty) {
+        setError("Error: Could not get the data");
+      }
       const essays = data.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -42,6 +49,8 @@ export default function MyEssays() {
       setOriginalEssays(essays);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,35 +122,47 @@ export default function MyEssays() {
 
   return (
     <div className="flex flex-col gap-5">
-      <Outlet />
-      <div className="flex gap-4">
-        <Input
-          type="search"
-          placeholder="Search for Author or Term you are looking for..."
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Select onValueChange={(value) => setCategory(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Chose Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all-categories">All Categories</SelectItem>
-            <SelectItem value="Aesthetics">Aesthetics</SelectItem>
-            <SelectItem value="Epistemology">Epistemology</SelectItem>
-            <SelectItem value="Ethics">Ethics</SelectItem>
-            <SelectItem value="Logic">Logic</SelectItem>
-            <SelectItem value="Metaphysics">Metaphysics</SelectItem>
-            <SelectItem value="Political Philosophy">
-              Political Philosophy
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex flex-col gap-5">
-        {essaysData.map((essay: oneEssayType) => (
-          <EssayCard key={essay.id} essay={essay} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex flex-col items-center gap-5 mt-5">
+          <Skeleton className="w-[1000px] h-[300px] " />
+          <Skeleton className="w-[1000px] h-[300px] " />
+          <Skeleton className="w-[1000px] h-[300px] " />
+        </div>
+      ) : error ? (
+        <span className="text-3xl">{error}</span>
+      ) : (
+        <>
+          <Outlet />
+          <div className="flex gap-4">
+            <Input
+              type="search"
+              placeholder="Search for Author or Term you are looking for..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Select onValueChange={(value) => setCategory(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Choose Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-categories">All Categories</SelectItem>
+                <SelectItem value="Aesthetics">Aesthetics</SelectItem>
+                <SelectItem value="Epistemology">Epistemology</SelectItem>
+                <SelectItem value="Ethics">Ethics</SelectItem>
+                <SelectItem value="Logic">Logic</SelectItem>
+                <SelectItem value="Metaphysics">Metaphysics</SelectItem>
+                <SelectItem value="Political Philosophy">
+                  Political Philosophy
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-5">
+            {essaysData.map((essay: oneEssayType) => (
+              <EssayCard key={essay.id} essay={essay} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
