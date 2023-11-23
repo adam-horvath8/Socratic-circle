@@ -35,9 +35,9 @@ export default function Home() {
     <>
       {loading ? (
         <div className="flex flex-col items-center gap-5">
-          <Skeleton className="w-[1000px] h-[300px] " />
-          <Skeleton className="w-[1000px] h-[300px] " />
-          <Skeleton className="w-[1000px] h-[300px] " />
+          <Skeleton className="w-full h-[300px] " />
+          <Skeleton className="w-full h-[300px] " />
+          <Skeleton className="w-full h-[300px] " />
         </div>
       ) : error ? (
         <span className="text-3xl">{error}</span>

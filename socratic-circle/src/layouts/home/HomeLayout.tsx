@@ -48,8 +48,8 @@ export default function HomeLayout() {
   return (
     <div className=" relative sm:flex">
       <DropdownMenu>
-        <div className="flex flex-col w-screen sm:hidden">
-          <DropdownMenuTrigger className="bg-orange-600 fixed w-screen min-h-[3rem] p-1">
+        <div className="flex flex-col w-screen sm:hidden z-50">
+          <DropdownMenuTrigger className="bg-orange-600 fixed w-screen min-h-[3rem] p-1 z-50">
             <img
               src={logo}
               alt=""

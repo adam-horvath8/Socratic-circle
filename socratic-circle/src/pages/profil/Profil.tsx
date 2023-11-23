@@ -149,10 +149,10 @@ export default function Profil() {
   return (
     <div className="flex flex-col items-center ">
       {loading ? (
-        <div className="flex flex-col items-center gap-5">
+        <div className="flex flex-col items-center gap-5 w-full">
           <Skeleton className="w-[200px] h-[200px] rounded-full" />
-          <Skeleton className="w-[1000px] h-[200px] " />
-          <div className="w-[1000px] h-[300px] grid grid-cols-2 gap-6">
+          <Skeleton className="w-full h-[200px] " />
+          <div className="w-full h-[200px] grid grid-cols-2 gap-6">
             <Skeleton />
             <Skeleton />
             <Skeleton />

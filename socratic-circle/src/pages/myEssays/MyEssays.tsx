@@ -124,9 +124,9 @@ export default function MyEssays() {
     <div className="flex flex-col gap-5">
       {loading ? (
         <div className="flex flex-col items-center gap-5 mt-5">
-          <Skeleton className="w-[1000px] h-[300px] " />
-          <Skeleton className="w-[1000px] h-[300px] " />
-          <Skeleton className="w-[1000px] h-[300px] " />
+          <Skeleton className="w-full h-[300px] " />
+          <Skeleton className="w-full h-[300px] " />
+          <Skeleton className="w-full h-[300px] " />
         </div>
       ) : error ? (
         <span className="text-3xl">{error}</span>
