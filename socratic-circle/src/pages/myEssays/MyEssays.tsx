@@ -1,7 +1,7 @@
 import { auth, db } from "@/config/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { EssayCard } from "@/components/EssayCard";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { essaysDataType, oneEssayType } from "@/types/types";
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -16,13 +16,14 @@ import {
 } from "@/components/ui/select";
 import { authPromise } from "@/lib/authPromise";
 import { Skeleton } from "@/components/ui/skeleton";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function MyEssays() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all-categories");
   const [originalEssays, setOriginalEssays] = useState<essaysDataType>([]);
-  const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState(true);
+  const [emptyData, setEmptyData] = useState(false);
 
   const essaysCollectionRef = collection(db, "essays");
   const essaysData = useSelector((state: any) => state.essaysData);
@@ -39,7 +40,7 @@ export default function MyEssays() {
       const data = await getDocs(q);
 
       if (data.empty) {
-        setError("Error: Could not get the data");
+        setEmptyData(true);
       }
       const essays = data.docs.map((doc) => ({
         id: doc.id,
@@ -128,8 +129,13 @@ export default function MyEssays() {
           <Skeleton className="w-full h-[300px] " />
           <Skeleton className="w-full h-[300px] " />
         </div>
-      ) : error ? (
-        <span className="text-3xl">{error}</span>
+      ) : emptyData ? (
+        <div className="flex flex-col items-center gap-5">
+          <h2 className="text-2xl">No Essays created by you</h2>
+          <Link className={buttonVariants() + "flex-1"} to="/in/create-essay">
+            Create Essay
+          </Link>
+        </div>
       ) : (
         <>
           <Outlet />
