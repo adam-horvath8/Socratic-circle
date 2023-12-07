@@ -1,8 +1,8 @@
-import { SearchBar } from "../../components/SearchBar";
+import { SearchBar } from "./components/SearchBar";
 import { EssayCard } from "../../components/EssayCard";
 import { useSelector } from "react-redux";
 import { essaysDataType } from "@/types/types";
-import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
+import useUpdateEssaysState from "@/hooks/useUpdateEssaysState";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 

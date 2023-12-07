@@ -3,10 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate, useParams } from "react-router-dom";
-import { bodyStateType, chapterType } from "../../types/types";
+import { bodyStateType } from "../../types/types";
+import { useToast } from "@/components/ui/use-toast";
+import scrollToTop from "@/lib/scrollToTop";
+import formSchema from "./util/formSchema";
 
 // import componenets
 import {
@@ -28,20 +31,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
-import scrollToTop from "@/lib/scrollToTop";
+import useBodyLogic from "./util/useBodyLogic";
 
-const formSchema = z.object({
-  title: z.string().min(2).max(100),
-  mainQuestion: z.string().min(2).max(500),
-  mainIssue: z.string().min(2).max(1000),
-  thesis: z.string().min(2).max(1000),
-  introduction: z.string().min(2).max(3000),
-  conclusion: z.string().min(2).max(3000),
-  cathegory: z.string().min(2).max(100),
-});
-
-const defaultBody: bodyStateType = [
+export const defaultBody: bodyStateType = [
   {
     chapterId: uuidv4(),
     chapterTitle: "",
@@ -50,114 +42,21 @@ const defaultBody: bodyStateType = [
 ];
 
 export default function CreateEssay() {
-  const [body, setBody] = useState<bodyStateType>(defaultBody);
   const { toast } = useToast();
   const { id } = useParams();
   const navigate = useNavigate();
 
   // Functions
-  const handleAddParagraph = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    chapterId: string
-  ) => {
-    e.preventDefault();
-
-    setBody((prevBody) => {
-      const updatedBody = prevBody.map((chapter) => {
-        if (chapter.chapterId === chapterId) {
-          return {
-            ...chapter,
-            chapterParagraphs: [
-              ...chapter.chapterParagraphs,
-              { id: uuidv4(), text: "" },
-            ],
-          };
-        }
-        return chapter;
-      });
-
-      return updatedBody;
-    });
-  };
-
-  const handleParagraphChange = (
-    chapterId: string,
-    paragraphId: string,
-    text: string
-  ) => {
-    setBody((prevBody) => {
-      const updatedBody = [...prevBody];
-      const chapterToUpdate = updatedBody.find(
-        (chapter) => chapter.chapterId === chapterId
-      );
-
-      if (chapterToUpdate) {
-        const paragraphToUpdate = chapterToUpdate.chapterParagraphs.find(
-          (par) => par.id === paragraphId
-        );
-
-        if (paragraphToUpdate) {
-          paragraphToUpdate.text = text;
-        }
-      }
-
-      return updatedBody;
-    });
-  };
-
-  const handleDeletePar = (chapterId: string, parId: string) => {
-    setBody((prev): chapterType[] => {
-      const updatedBody = prev.map((chapter) => {
-        if (chapter.chapterId === chapterId) {
-          const filteredParagraphs = chapter.chapterParagraphs.filter(
-            (par) => par.id !== parId
-          );
-          return {
-            ...chapter,
-            chapterParagraphs: filteredParagraphs,
-          };
-        }
-        return chapter;
-      });
-      return updatedBody;
-    });
-  };
-
-  const handleAddChapter = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    setBody((prevBody) => [
-      ...prevBody,
-      {
-        chapterId: uuidv4(),
-        chapterTitle: "",
-        chapterParagraphs: [{ id: uuidv4(), text: "" }],
-      },
-    ]);
-  };
-
-  const handleDeleteChapter = (id: string) => {
-    const filteredBodyChapters = body.filter(
-      (chapter) => chapter.chapterId !== id
-    );
-    if (body.length > 1) {
-      setBody(filteredBodyChapters);
-    }
-  };
-
-  const handleChapterChange = (chapterId: string, text: string) => {
-    setBody((prevBody) => {
-      const updatedBody = [...prevBody];
-      const chapterToUpdate = updatedBody.find(
-        (chapter) => chapter.chapterId === chapterId
-      );
-      if (chapterToUpdate) {
-        chapterToUpdate.chapterTitle = text;
-      }
-      return updatedBody;
-    });
-  };
+  const {
+    body,
+    setBody,
+    handleAddParagraph,
+    handleParagraphChange,
+    handleDeletePar,
+    handleAddChapter,
+    handleDeleteChapter,
+    handleChapterChange,
+  } = useBodyLogic();
 
   // Form validations
 

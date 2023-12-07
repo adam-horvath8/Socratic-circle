@@ -13,8 +13,8 @@ import { useDispatch } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { essaysDataType, oneEssayType } from "@/types/types";
 import { db } from "@/config/firebase";
-import { addData } from "@/features/essaysData";
-import useUpdateEssaysState from "@/lib/useUpdateEssaysState";
+import { addData } from "@/redux/features/essaysData";
+import useUpdateEssaysState from "@/hooks/useUpdateEssaysState";
 
 interface ISearchBar {
   numberOfEssaysDisplayed: number;

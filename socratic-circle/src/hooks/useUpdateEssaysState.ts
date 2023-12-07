@@ -1,5 +1,5 @@
 import { db } from "@/config/firebase";
-import { addData } from "@/features/essaysData";
+import { addData } from "@/redux/features/essaysData";
 import { essaysDataType } from "@/types/types";
 import { collection, getDocs, limit, query } from "firebase/firestore";
 import { useState } from "react";

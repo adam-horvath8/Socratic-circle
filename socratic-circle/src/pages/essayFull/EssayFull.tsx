@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
-import { removeData } from "@/features/essaysData";
+import { removeData } from "@/redux/features/essaysData";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function EssayFull() {

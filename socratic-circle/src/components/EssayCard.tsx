@@ -21,7 +21,7 @@ import ProfileContainer from "./ProfileContainer";
 import { useEffect, useState } from "react";
 import { DetailAccordion } from "./DetailAccordion";
 import { useDispatch, useSelector } from "react-redux";
-import { updateData } from "@/features/essaysData";
+import { updateData } from "@/redux/features/essaysData";
 
 interface IEssayCard {
   essay: oneEssayType;

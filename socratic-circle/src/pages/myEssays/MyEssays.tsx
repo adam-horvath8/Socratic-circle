@@ -1,11 +1,8 @@
-import { auth, db } from "@/config/firebase";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { EssayCard } from "@/components/EssayCard";
 import { Link, Outlet } from "react-router-dom";
-import { essaysDataType, oneEssayType } from "@/types/types";
-import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { addData } from "@/features/essaysData";
+import { oneEssayType } from "@/types/types";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -14,112 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { authPromise } from "@/lib/authPromise";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buttonVariants } from "@/components/ui/button";
+import useHandleSearch from "./util/useHandleSearch";
+import useGetAuthEssays from "./util/useGetAuthEssays";
 
 export default function MyEssays() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState("all-categories");
-  const [originalEssays, setOriginalEssays] = useState<essaysDataType>([]);
-  const [loading, setLoading] = useState(true);
-  const [emptyData, setEmptyData] = useState(false);
-
-  const essaysCollectionRef = collection(db, "essays");
   const essaysData = useSelector((state: any) => state.essaysData);
-  const dispatch = useDispatch();
 
-  const getAuthEssays = async () => {
-    try {
-      await authPromise;
+  const { setCategory, setSearchTerm } = useHandleSearch();
 
-      const q = query(
-        essaysCollectionRef,
-        where("author.id", "==", auth.currentUser?.uid)
-      );
-      const data = await getDocs(q);
-
-      if (data.empty) {
-        setEmptyData(true);
-      }
-      const essays = data.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as essaysDataType;
-      dispatch(addData(essays));
-      setOriginalEssays(essays);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getAuthEssays();
-  }, []);
-
-  const handleSearch = (dataToSearch: essaysDataType) => {
-    const searchedData: essaysDataType = dataToSearch.filter(
-      (essay: oneEssayType) => {
-        // Check if the essay's category matches the selected category
-        const isCategoryMatch =
-          category === "all-categories" || essay.cathegory === category;
-
-        // Check for search term match only if the category matches
-        if (isCategoryMatch) {
-          const values = Object.values(essay).map((value) =>
-            typeof value === "string" ? value.toLowerCase() : value
-          );
-
-          const includesSearchTerm = values.some(
-            (value) =>
-              typeof value === "string" &&
-              value.includes(searchTerm.toLowerCase())
-          );
-          const paragraphs = essay.body.flatMap((chapter) =>
-            chapter.chapterParagraphs.map((paragraph) =>
-              paragraph.text.toLowerCase()
-            )
-          );
-          const includesInParagraphs = paragraphs.some((paragraph) =>
-            paragraph.includes(searchTerm.toLowerCase())
-          );
-          const chapters = essay.body.map((chapter) =>
-            chapter.chapterTitle.toLocaleLowerCase()
-          );
-          const includesInChapters = chapters.some((chapter) =>
-            chapter.includes(searchTerm.toLowerCase())
-          );
-
-          const findAuthor = essay.author.name
-            .toLocaleLowerCase()
-            .includes(searchTerm.toLocaleLowerCase());
-
-          return (
-            includesSearchTerm ||
-            includesInChapters ||
-            includesInParagraphs ||
-            findAuthor
-          );
-        }
-
-        return false;
-      }
-    );
-
-    dispatch(addData(searchedData));
-  };
-
-  useEffect(() => {
-    if (searchTerm.length > 2 || category !== "all-categories") {
-      handleSearch(originalEssays);
-    } else if (searchTerm.length === 0) {
-      dispatch(addData(originalEssays));
-    }
-  }, [searchTerm, category]);
-
-  console.log(essaysData);
+  const { loading, emptyData } = useGetAuthEssays();
 
   return (
     <div className="flex flex-col gap-5">

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import mainStore from "./stores/mainStore.ts";
+import mainStore from "./redux/stores/mainStore.ts";
 import { Provider } from "react-redux";
 import { Toaster } from "./components/ui/toaster.tsx";
 import AuthObserver from "./components/AuthObserver.tsx";
