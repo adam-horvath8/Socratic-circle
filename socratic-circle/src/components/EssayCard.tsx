@@ -17,11 +17,12 @@ import scrollToTop from "@/lib/scrollToTop";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/config/firebase";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import ProfileContainer from "./ProfileContainer";
+import ProfileContainer from "../pages/profil/components/ProfileContainer";
 import { useEffect, useState } from "react";
 import { DetailAccordion } from "./DetailAccordion";
 import { useDispatch, useSelector } from "react-redux";
 import { updateData } from "@/redux/features/essaysData";
+import signInToast from "@/lib/signInToast";
 
 interface IEssayCard {
   essay: oneEssayType;
@@ -44,6 +45,7 @@ export function EssayCard({ essay }: IEssayCard) {
   }, [essaysData]);
 
   const handleLikes = async () => {
+    signInToast();
     try {
       // Fetch the current essay document
       const essayDoc = await getDoc(essayDocRef);

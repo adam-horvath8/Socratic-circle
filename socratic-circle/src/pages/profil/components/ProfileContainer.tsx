@@ -2,7 +2,7 @@ import { db } from "@/config/firebase";
 import { ProfileDataType } from "@/types/types";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Card, CardTitle } from "./ui/card";
+import { Card, CardTitle } from "../../../components/ui/card";
 
 export interface IProfileContainerProps {
   id?: string;

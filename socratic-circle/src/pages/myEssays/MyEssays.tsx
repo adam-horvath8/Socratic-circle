@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { buttonVariants } from "@/components/ui/button";
 import useHandleSearch from "./util/useHandleSearch";
 import useGetAuthEssays from "./util/useGetAuthEssays";
+import signInToast from "@/lib/signInToast";
 
 export default function MyEssays() {
   const essaysData = useSelector((state: any) => state.essaysData);
@@ -22,6 +23,8 @@ export default function MyEssays() {
   const { setCategory, setSearchTerm } = useHandleSearch();
 
   const { loading, emptyData } = useGetAuthEssays();
+
+  signInToast()
 
   return (
     <div className="flex flex-col gap-5">

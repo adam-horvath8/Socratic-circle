@@ -1,17 +1,14 @@
 import { auth } from "@/config/firebase";
 import { login } from "@/redux/features/auth";
-import { AuthStateType } from "@/types/types";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export default function useLogout() {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-
-  const authState = useSelector((state: AuthStateType) => state.authState);
 
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -32,5 +29,5 @@ export default function useLogout() {
     }
   };
 
-  return { authState, handleLogOut };
+  return { handleLogOut };
 }
