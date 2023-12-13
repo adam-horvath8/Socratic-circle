@@ -7,7 +7,7 @@ import useHandleLogin from "./util/useHandleLogin";
 //  types
 
 export default function LogIn() {
-  const { signInWithGoogle } = useHandleLogin();
+  const { signInWithGoogle, signInAsGuest } = useHandleLogin();
 
   return (
     <div className="h-screen w-screen flex flex-col justify-center items-center lg:items-start gap-32 p-10">
@@ -33,6 +33,7 @@ export default function LogIn() {
           <img src={google} alt="google logo" />
           Sign in with Gmail
         </Button>
+        <Button variant="outline" onClick={signInAsGuest}>Guest Login</Button>
       </div>
     </div>
   );

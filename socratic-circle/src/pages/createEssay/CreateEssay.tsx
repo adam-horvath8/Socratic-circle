@@ -49,6 +49,8 @@ export default function CreateEssay() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  console.log("current user", auth.currentUser);
+
   // Functions
   const {
     body,
@@ -135,7 +137,9 @@ export default function CreateEssay() {
       comments: [],
       likes: [],
       author: {
-        name: auth.currentUser?.displayName,
+        name: auth.currentUser?.isAnonymous
+          ? "Anonymous"
+          : auth.currentUser?.displayName,
         id: auth.currentUser?.uid,
       },
     };
@@ -163,8 +167,6 @@ export default function CreateEssay() {
       console.error(err);
     }
   }
-
-  
 
   return (
     <div className=" flex flex-col items-center max-w-screen">

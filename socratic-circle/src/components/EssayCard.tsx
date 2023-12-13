@@ -22,7 +22,6 @@ import { useEffect, useState } from "react";
 import { DetailAccordion } from "./DetailAccordion";
 import { useDispatch, useSelector } from "react-redux";
 import { updateData } from "@/redux/features/essaysData";
-import signInToast from "@/lib/signInToast";
 
 interface IEssayCard {
   essay: oneEssayType;
@@ -45,7 +44,6 @@ export function EssayCard({ essay }: IEssayCard) {
   }, [essaysData]);
 
   const handleLikes = async () => {
-    signInToast();
     try {
       // Fetch the current essay document
       const essayDoc = await getDoc(essayDocRef);

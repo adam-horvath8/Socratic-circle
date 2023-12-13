@@ -6,14 +6,11 @@ import { ProfileForm } from "./components/ProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProfileContainer from "@/pages/profil/components/ProfileContainer";
-import signInToast from "@/lib/signInToast";
 
 export default function Profil() {
   const { profileDataState, error, loading } = useGetUserProfile();
 
   const photoURL = auth.currentUser?.photoURL;
-
-  signInToast();
 
   console.log(profileDataState);
 

@@ -1,6 +1,6 @@
 import { auth, db, provider } from "@/config/firebase";
 import { login } from "@/redux/features/auth";
-import { signInWithPopup } from "firebase/auth";
+import { signInAnonymously, signInWithPopup } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ const useHandleLogin = () => {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        await createNewProfile();
+        await createNewProfile(auth.currentUser?.uid);
       }
 
       dispatch(login(true));
@@ -33,7 +33,29 @@ const useHandleLogin = () => {
     }
   };
 
-  return { signInWithGoogle };
+  const signInAsGuest = async () => {
+    try {
+      const guestCredential = await signInAnonymously(auth);
+
+      const q = query(
+        collection(db, "profiles"),
+        where("userId", "==", guestCredential.user.uid)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        await createNewProfile(guestCredential.user.uid);
+      }
+
+      dispatch(login(true));
+
+      navigate("/in/home");
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
+  };
+
+  return { signInWithGoogle, signInAsGuest };
 };
 
 export default useHandleLogin;
